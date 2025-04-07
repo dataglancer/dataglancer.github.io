@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Projects | John</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans">
+  <header class="bg-white shadow p-4">
+    <div class="max-w-5xl mx-auto flex justify-between items-center">
+      <h1 class="text-xl font-bold">John</h1>
+      <nav class="space-x-4">
+        <a href="index.html" class="text-blue-600 hover:underline">Home</a>
+        <a href="#skills" class="text-blue-600 hover:underline">Skills</a>
+        <a href="#experience" class="text-blue-600 hover:underline">Experience</a>
+        <a href="#contact" class="text-blue-600 hover:underline">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="max-w-5xl mx-auto p-6">
+    <section class="mt-12">
+      <h2 class="text-3xl font-bold text-center mb-8">Projects</h2>
+
+      <!-- Security Projects -->
+      <div class="mb-12">
+        <h3 class="text-2xl font-semibold mb-4">🔐 Security Projects</h3>
+        <ul class="space-y-6">
+          <li class="bg-white p-4 shadow rounded">
+            <h4 class="text-xl font-semibold">Anomaly Detection for Network Traffic</h4>
+            <p class="text-gray-600">Used unsupervised learning (Isolation Forest, Autoencoders) to detect anomalies in high-volume enterprise network logs. Deployed using AWS EC2 + S3 for log handling.</p>
+            <a href="#" class="text-blue-600 hover:underline">View on GitHub</a>
+          </li>
+          <li class="bg-white p-4 shadow rounded">
+            <h4 class="text-xl font-semibold">Threat Hunting Dashboard</h4>
+            <p class="text-gray-600">Built a dashboard in Streamlit to visualize endpoint detection signals and prioritize potential threats based on ML scoring.</p>
+            <a href="#" class="text-blue-600 hover:underline">View on GitHub</a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Non-Security Projects -->
+      <div>
+        <h3 class="text-2xl font-semibold mb-4">📊 Non-Security Projects</h3>
+        <ul class="space-y-6">
+          <li class="bg-white p-4 shadow rounded">
+            <h4 class="text-xl font-semibold">Coffee Price Trend Analysis</h4>
+            <p class="text-gray-600">Analyzed global coffee price trends using pandas and seaborn. Created a clean dashboard with insights on pricing volatility.</p>
+            <a href="#" class="text-blue-600 hover:underline">View on GitHub</a>
+          </li>
+          <li class="bg-white p-4 shadow rounded">
+            <h4 class="text-xl font-semibold">Interactive Whiskey Explorer</h4>
+            <p class="text-gray-600">Built an interactive Streamlit app to visualize and filter whiskey tasting notes from a public dataset. Great for storytelling and EDA practice.</p>
+            <a href="#" class="text-blue-600 hover:underline">View on GitHub</a>
+          </li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <footer class="text-center text-sm text-gray-500 mt-16 mb-4">
+    &copy; 2025 John. Built with Tailwind CSS.
+  </footer>
+</body>
+</html>
+
