@@ -1,80 +1,74 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Projects | John</title>
   <link rel="icon" href="LogoMe.png" type="image/png">
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
   <style>
     body {
-      font-family: 'Rubik', sans-serif;
+      font-family: 'Inter', sans-serif;
     }
-    .lego-yellow {
-      background-color: #F4C430;
+    .text-mint {
+      color: #00FFC3;
     }
-    .lego-blue {
-      background-color: #0033A0;
-    }
-    .lego-blue-text {
-      color: #0033A0;
+    .hover-mint:hover {
+      color: #00FFC3;
     }
   </style>
 </head>
-<body class="bg-gray-50 text-gray-800">
-  <header class="bg-white shadow p-4 lego-blue">
-    <div class="max-w-5xl mx-auto flex justify-between items-center">
-      <h1 class="text-xl font-bold text-white">John</h1>
-      <nav class="space-x-4">
-        <a href="index.html" class="text-yellow-300 hover:text-white font-medium">Home</a>
-        <a href="projects.html" class="text-yellow-300 hover:text-white font-medium">Projects</a>
-        <a href="skills.html" class="text-yellow-300 hover:text-white font-medium">Skills</a>
-        <a href="experience.html" class="text-yellow-300 hover:text-white font-medium">Experience</a>
-        <a href="contact.html" class="text-yellow-300 hover:text-white font-medium">Contact</a>
+<body class="bg-black text-white">
+  <header class="fixed w-full bg-black bg-opacity-80 backdrop-blur text-white shadow-md z-50">
+    <div class="max-w-6xl mx-auto flex justify-between items-center px-8 py-4">
+      <h1 class="text-2xl font-bold text-mint">John</h1>
+      <nav class="space-x-6">
+        <a href="index.html" class="hover-mint">Home</a>
+        <a href="projects.html" class="hover-mint">Projects</a>
+        <a href="skills.html" class="hover-mint">Skills</a>
+        <a href="experience.html" class="hover-mint">Experience</a>
+        <a href="contact.html" class="hover-mint">Contact</a>
       </nav>
     </div>
   </header>
 
-  <main class="max-w-5xl mx-auto p-6">
-    <section class="mt-12">
-      <h2 class="text-3xl font-bold text-center lego-blue-text mb-6">Featured Projects</h2>
+  <main class="max-w-5xl mx-auto p-6 pt-24">
+    <section class="py-20 px-8 text-center">
+      <h2 class="text-4xl font-bold text-mint mb-12">Projects</h2>
+      <p class="text-lg text-gray-400 mb-12">A showcase of security-focused and general machine learning projects demonstrating my skills in Python, SQL, visualization, and cloud platforms.</p>
 
-      <div class="mb-12">
-        <h3 class="text-2xl font-semibold lego-blue-text mb-4">Security Projects</h3>
-        <div class="grid md:grid-cols-2 gap-6">
-          <div class="bg-white shadow-lg rounded-lg p-4 border border-yellow-200">
-            <h4 class="text-xl font-semibold mb-2">Anomaly Detection System</h4>
-            <p class="text-gray-700 mb-2">Built a real-time anomaly detection engine using scikit-learn and AWS Lambda to flag network-based intrusions.</p>
-            <a href="#" class="text-blue-600 hover:underline">View on GitHub</a>
-          </div>
-          <div class="bg-white shadow-lg rounded-lg p-4 border border-yellow-200">
-            <h4 class="text-xl font-semibold mb-2">SIEM Log Classifier</h4>
-            <p class="text-gray-700 mb-2">Classified Splunk logs with NLP techniques to identify threat categories and enhance SOC response workflows.</p>
-            <a href="#" class="text-blue-600 hover:underline">View on GitHub</a>
-          </div>
-        </div>
-      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
 
-      <div>
-        <h3 class="text-2xl font-semibold lego-blue-text mb-4">Applied Data Projects</h3>
-        <div class="grid md:grid-cols-2 gap-6">
-          <div class="bg-white shadow-lg rounded-lg p-4 border border-yellow-200">
-            <h4 class="text-xl font-semibold mb-2">Coffee Pricing Dashboard</h4>
-            <p class="text-gray-700 mb-2">Interactive data viz project analyzing global coffee prices using Streamlit and Plotly.</p>
-            <a href="#" class="text-blue-600 hover:underline">View on GitHub</a>
-          </div>
-          <div class="bg-white shadow-lg rounded-lg p-4 border border-yellow-200">
-            <h4 class="text-xl font-semibold mb-2">Fitness Tracker Analysis</h4>
-            <p class="text-gray-700 mb-2">Explored personal health data from a wearable tracker and built a regression model to predict workout fatigue.</p>
-            <a href="#" class="text-blue-600 hover:underline">View on GitHub</a>
-          </div>
+        <div class="bg-gray-900 rounded-lg p-6 shadow-lg">
+          <h3 class="text-2xl font-semibold text-mint mb-2">Security Anomaly Detection</h3>
+          <p class="text-gray-400 mb-4">Built real-time anomaly detection for enterprise network traffic using Python, scikit-learn, and AWS Lambda.</p>
+          <a href="#" class="text-mint hover:underline">View Project</a>
         </div>
+
+        <div class="bg-gray-900 rounded-lg p-6 shadow-lg">
+          <h3 class="text-2xl font-semibold text-mint mb-2">SIEM Log Classifier</h3>
+          <p class="text-gray-400 mb-4">Classified security events from Splunk using NLP techniques to optimize incident triage.</p>
+          <a href="#" class="text-mint hover:underline">View Project</a>
+        </div>
+
+        <div class="bg-gray-900 rounded-lg p-6 shadow-lg">
+          <h3 class="text-2xl font-semibold text-mint mb-2">Coffee Pricing Dashboard</h3>
+          <p class="text-gray-400 mb-4">Interactive dashboard analyzing global coffee prices and supply trends with Streamlit and Plotly.</p>
+          <a href="#" class="text-mint hover:underline">View Project</a>
+        </div>
+
+        <div class="bg-gray-900 rounded-lg p-6 shadow-lg">
+          <h3 class="text-2xl font-semibold text-mint mb-2">Fitness Tracker Data Analysis</h3>
+          <p class="text-gray-400 mb-4">Built predictive models analyzing wearable device data for workout fatigue and recovery optimization.</p>
+          <a href="#" class="text-mint hover:underline">View Project</a>
+        </div>
+
       </div>
     </section>
   </main>
 
-  <footer class="text-center text-sm text-gray-500 mt-16 mb-4">
+  <footer class="text-center text-sm text-gray-500 mt-16 mb-8">
     &copy; 2025 John. Built with Tailwind CSS.
   </footer>
 </body>
