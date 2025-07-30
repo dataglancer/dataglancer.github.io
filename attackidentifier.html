@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Anomaly Detection | John</title>
+  <title>John | Attack Identifier</title>
   <link rel="icon" href="mecutoutcyber_favicon.png" type="image/png" />
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <style>
@@ -23,50 +23,59 @@
     
     <!-- Header -->
     <section class="mb-12">
-      <h1 class="text-4xl font-bold text-mint mb-2">Anomaly Detection in Security Logs</h1>
-      <p class="text-gray-400">A modular machine learning suite for detecting anomalies across varied security log types.</p>
+      <h1 class="text-4xl font-bold text-mint mb-2">Attack Identifier in Security Logs</h1>
+      <p class="text-gray-400">A modular machine learning suite for identifying attacks across log types.</p>
     </section>
 
     <!-- Summary Section -->
     <section class="mb-12">
-      <h2 class="text-2xl font-semibold text-mint mb-4">Project Summary</h2>
-      <p class="text-gray-300">
-        This project explores various techniques for identifying anomalous behavior in system, network, and endpoint security logs.
-        The suite includes multiple Jupyter notebooks each focusing on different detection methods (e.g. statistical outlier models, clustering, autoencoders),
-        log types (EDR, DNS, proxy, authentication), and feature engineering pipelines.
+      <h2 class="text-2xl font-semibold text-mint mb-4">Project Overview</h2>
+      <p>
+        This project ingests high‑volume NetFlow/PCAP‑derived datasets—comprising benign traffic and multiple attack types—and delivers a two‑stage, real‑time classification system.
       </p>
+      <ul style="list-style: none; margin: 0; padding-left: 1.5em;">
+        <li class="mb-4">
+          <strong>Stage 1: Attack vs. Benign</strong><br>
+          A binary <em>XGBoost</em> model flags each flow as “benign” or “attack,” achieving ~98 % accuracy and 0.99 AUC on hold‑out data with training times under 20 seconds.
+        </li>
+        <li class="mb-4">
+          <strong>Stage 2: Attack Type Identification</strong><br>
+          For flows flagged as “attack,” a multiclass <em>XGBoost</em> model determines the specific family (e.g. DDoS‑HTTP, SSH‑BruteForce, SQL Injection). Dominant classes reach F₁‑scores &gt; 0.99; weaker classes are highlighted for targeted feature improvements.
+        </li>
+        <li class="mb-4">
+          <strong>End‑to‑End Visualization</strong><br>
+          An interactive Sankey diagram illustrates how traffic splits through each stage—showing volumes for benign logs and every attack subtype.
+        </li>
+        <li>
+          <strong>Scalable &amp; Online‑Ready</strong><br>
+          Built in Jupyter with batch‑fit XGBoost, the same feature pipeline can be adapted to online variants (e.g. <em>MiniBatchKMeans</em>, <em>River</em>) for real‑time Security Operations ingestion.
+        </li>
+      </ul>
     </section>
 
     <!-- Highlights Section -->
     <section class="mb-12">
       <h2 class="text-2xl font-semibold text-mint mb-4">Highlights</h2>
       <ul class="list-disc list-inside text-gray-300 space-y-2">
-        <li>10+ modular notebooks, each dedicated to a different log source or detection strategy</li>
-        <li>Custom feature engineering pipelines for proxy, DNS, EDR, and authentication logs</li>
-        <li>Demonstrates unsupervised, semi-supervised, and supervised learning methods</li>
-        <li>Includes visualizations, EDA, and detailed metric evaluation (ROC, F1, clustering scores)</li>
+        <li><strong>Early Detection:</strong> Flags anomalies at line‑rate so SOC teams can intervene before attacks escalate.</li>
+        <li><strong>Automated Triage:</strong> Auto‑classifies attack types, enabling analysts to prioritize DDoS, brute‑force, SQL exploits, or lateral‑movement probes.</li>
+        <li><strong>Resource Efficiency:</strong> Two‑stage logic minimizes multiclass inference to only suspicious flows, cutting compute costs and false alarms.</li>
+        <li><strong>Performance &amp; Scalability:</strong> Models train in seconds on millions of flows; easily evolves into streaming architectures without re‑engineering.</li>
+        <li><strong>Actionable Insights:</strong> Detailed per‑class metrics uncover blind spots (e.g. slow‑HTTP tests), guiding feature engineering and signature development.</li>
+        <li><strong>Clear Reporting:</strong> Bar charts and Sankey diagrams communicate model performance and traffic splits for dashboards, threat briefings, and compliance.</li>
       </ul>
     </section>
 
-    <!-- Example Notebooks -->
+    <!-- Notebooks Section -->
     <section class="mb-12">
-      <h2 class="text-2xl font-semibold text-mint mb-4">Notebooks</h2>
+      <h2 class="text-2xl font-semibold text-mint mb-4">Notebook</h2>
       <div class="space-y-6">
         <div>
-          <h3 class="text-xl font-semibold text-white">Notebook 1: Anomaly Detection in Proxy Logs</h3>
+          <h3 class="text-xl font-semibold text-white">Attack Identifier</h3>
           <p class="text-gray-400 mb-2">
-            Applies DBSCAN and isolation forests to detect suspicious outbound connections.
+            Applies a two-stage classification pipeline to identify attack types from NetFlow logs.
           </p>
-          <a href="https://github.com/dataglancer/anomaly-proxy-notebook" class="text-mint hover:underline" target="_blank">
-            View Notebook →
-          </a>
-        </div>
-        <div>
-          <h3 class="text-xl font-semibold text-white">Notebook 2: DNS Behavior Modeling</h3>
-          <p class="text-gray-400 mb-2">
-            Uses time-series embeddings and window-based anomaly scoring on DNS resolution patterns.
-          </p>
-          <a href="https://github.com/dataglancer/anomaly-dns-notebook" class="text-mint hover:underline" target="_blank">
+          <a href="https://github.com/dataglancer/dataglancer.github.io/blob/main/attackidentifier/notebooks/attackidentifier.ipynb" class="text-mint hover:underline" target="_blank">
             View Notebook →
           </a>
         </div>
@@ -74,13 +83,21 @@
       </div>
     </section>
 
-    <!-- Visualizations -->
+    <!-- Example Visualizations -->
     <section class="mb-12">
       <h2 class="text-2xl font-semibold text-mint mb-4">Example Visualizations</h2>
-      <p class="text-gray-400 mb-4">Below are selected results from the notebooks:</p>
+      <p class="text-gray-400 mb-4">Key model outputs from the analysis:</p>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <img src="images/edr_cluster_plot.png" alt="EDR Cluster Example" class="rounded-lg shadow-md">
-        <img src="images/dns_anomaly_timeline.png" alt="DNS Timeline" class="rounded-lg shadow-md">
+        <!-- F1‑scores bar chart -->
+        <div class="flex flex-col items-center">
+          <h3 class="text-lg font-medium mb-2 text-white">F₁ Score by Class</h3>
+          <img src="output.png" alt="F1 Score by Class" class="rounded-lg shadow-md">
+        </div>
+        <!-- Sankey diagram -->
+        <div class="flex flex-col items-center">
+          <h3 class="text-lg font-medium mb-2 text-white">Two‑Stage Classification Flow</h3>
+          <img src="newplot.png" alt="Two‑Stage Classification Sankey Diagram" class="rounded-lg shadow-md">
+        </div>
       </div>
     </section>
 
@@ -88,9 +105,9 @@
     <section class="mb-12">
       <h2 class="text-2xl font-semibold text-mint mb-4">Key Takeaways</h2>
       <ul class="list-disc list-inside text-gray-300 space-y-2">
-        <li>Different log types require different detection techniques — no one-size-fits-all.</li>
-        <li>Effective detection pipelines depend on strong preprocessing and domain-aligned feature engineering.</li>
-        <li>Visualizations are critical for interpreting model results in an operational setting.</li>
+        <li>Different log types require tailored detection techniques—no one‑size‑fits‑all.</li>
+        <li>Effective pipelines hinge on robust preprocessing and domain‑aligned feature engineering.</li>
+        <li>Clear visualizations are critical for operational interpretation of model results.</li>
       </ul>
     </section>
 

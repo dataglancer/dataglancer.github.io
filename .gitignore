@@ -1,0 +1,21 @@
+# Ignore all CSV files
+*.csv
+
+# Ignore parquet
+*.parquet
+# Ignore all data files inside the data/ folder
+/data/
+
+# Ignore notebook checkpoints
+.ipynb_checkpoints/
+
+# Ignore logs
+*.log
+
+# Ignore Python compiled files
+__pycache__/
+*.pyc
+
+# Ignore environment files
+.env
+
