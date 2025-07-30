@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Anomaly Detection | John</title>
+  <link rel="icon" href="mecutoutcyber_favicon.png" type="image/png" />
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <style>
+    body {
+      font-family: Helvetica, Arial, sans-serif;
+    }
+    .text-mint {
+      color: #00FFC3;
+    }
+    .hover-mint:hover {
+      color: #00FFC3;
+    }
+  </style>
+</head>
+<body class="bg-black text-white">
+  <main class="max-w-5xl mx-auto p-6 pt-24">
+    
+    <!-- Header -->
+    <section class="mb-12">
+      <h1 class="text-4xl font-bold text-mint mb-2">Anomaly Detection in Security Logs</h1>
+      <p class="text-gray-400">A modular machine learning suite for detecting anomalies across varied security log types.</p>
+    </section>
+
+    <!-- Summary Section -->
+    <section class="mb-12">
+      <h2 class="text-2xl font-semibold text-mint mb-4">Project Summary</h2>
+      <p class="text-gray-300">
+        This project explores various techniques for identifying anomalous behavior in system, network, and endpoint security logs.
+        The suite includes multiple Jupyter notebooks each focusing on different detection methods (e.g. statistical outlier models, clustering, autoencoders),
+        log types (EDR, DNS, proxy, authentication), and feature engineering pipelines.
+      </p>
+    </section>
+
+    <!-- Highlights Section -->
+    <section class="mb-12">
+      <h2 class="text-2xl font-semibold text-mint mb-4">Highlights</h2>
+      <ul class="list-disc list-inside text-gray-300 space-y-2">
+        <li>10+ modular notebooks, each dedicated to a different log source or detection strategy</li>
+        <li>Custom feature engineering pipelines for proxy, DNS, EDR, and authentication logs</li>
+        <li>Demonstrates unsupervised, semi-supervised, and supervised learning methods</li>
+        <li>Includes visualizations, EDA, and detailed metric evaluation (ROC, F1, clustering scores)</li>
+      </ul>
+    </section>
+
+    <!-- Example Notebooks -->
+    <section class="mb-12">
+      <h2 class="text-2xl font-semibold text-mint mb-4">Notebooks</h2>
+      <div class="space-y-6">
+        <div>
+          <h3 class="text-xl font-semibold text-white">Notebook 1: Anomaly Detection in Proxy Logs</h3>
+          <p class="text-gray-400 mb-2">
+            Applies DBSCAN and isolation forests to detect suspicious outbound connections.
+          </p>
+          <a href="https://github.com/dataglancer/anomaly-proxy-notebook" class="text-mint hover:underline" target="_blank">
+            View Notebook →
+          </a>
+        </div>
+        <div>
+          <h3 class="text-xl font-semibold text-white">Notebook 2: DNS Behavior Modeling</h3>
+          <p class="text-gray-400 mb-2">
+            Uses time-series embeddings and window-based anomaly scoring on DNS resolution patterns.
+          </p>
+          <a href="https://github.com/dataglancer/anomaly-dns-notebook" class="text-mint hover:underline" target="_blank">
+            View Notebook →
+          </a>
+        </div>
+        <!-- Add more notebook entries here -->
+      </div>
+    </section>
+
+    <!-- Visualizations -->
+    <section class="mb-12">
+      <h2 class="text-2xl font-semibold text-mint mb-4">Example Visualizations</h2>
+      <p class="text-gray-400 mb-4">Below are selected results from the notebooks:</p>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <img src="images/edr_cluster_plot.png" alt="EDR Cluster Example" class="rounded-lg shadow-md">
+        <img src="images/dns_anomaly_timeline.png" alt="DNS Timeline" class="rounded-lg shadow-md">
+      </div>
+    </section>
+
+    <!-- Takeaways -->
+    <section class="mb-12">
+      <h2 class="text-2xl font-semibold text-mint mb-4">Key Takeaways</h2>
+      <ul class="list-disc list-inside text-gray-300 space-y-2">
+        <li>Different log types require different detection techniques — no one-size-fits-all.</li>
+        <li>Effective detection pipelines depend on strong preprocessing and domain-aligned feature engineering.</li>
+        <li>Visualizations are critical for interpreting model results in an operational setting.</li>
+      </ul>
+    </section>
+
+    <!-- Navigation -->
+    <section class="mt-12 text-center">
+      <a href="index.html#projects" class="text-mint hover:underline">← Back to Projects</a>
+    </section>
+
+  </main>
+
+  <footer class="text-center text-sm text-gray-500 mt-16 mb-8">
+    &copy; 2025 John. Built with Tailwind CSS.
+  </footer>
+</body>
+</html>
