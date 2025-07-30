@@ -23,33 +23,31 @@
     
     <!-- Header -->
     <section class="mb-12">
-      <h1 class="text-4xl font-bold text-mint mb-2">Attack Identifier in Security Logs</h1>
-      <p class="text-gray-400">A modular machine learning suite for identifying attacks across log types.</p>
+      <h1 class="text-4xl font-bold text-mint mb-2">Attack Identifier in NetFlow Logs</h1>
+      <p class="text-gray-300">A modular machine learning suite for identifying attacks across log types.</p>
     </section>
 
     <!-- Summary Section -->
     <section class="mb-12">
       <h2 class="text-2xl font-semibold text-mint mb-4">Project Overview</h2>
-      <p>
+      <p class="text-gray-300 mb-4">
         This project ingests high‑volume NetFlow/PCAP‑derived datasets—comprising benign traffic and multiple attack types—and delivers a two‑stage, real‑time classification system.
       </p>
       <ul style="list-style: none; margin: 0; padding-left: 1.5em;">
         <li class="mb-4">
           <strong>Stage 1: Attack vs. Benign</strong><br>
-          A binary <em>XGBoost</em> model flags each flow as “benign” or “attack,” achieving ~98 % accuracy and 0.99 AUC on hold‑out data with training times under 20 seconds.
+           <p class="text-gray-300 mb-4">
+          A binary <em>XGBoost</em> model flags each flow as “benign” or “attack,” achieving ~98 % accuracy and 0.99 AUC on hold‑out data with training times under 20 seconds.</p>
         </li>
         <li class="mb-4">
           <strong>Stage 2: Attack Type Identification</strong><br>
-          For flows flagged as “attack,” a multiclass <em>XGBoost</em> model determines the specific family (e.g. DDoS‑HTTP, SSH‑BruteForce, SQL Injection). Dominant classes reach F₁‑scores &gt; 0.99; weaker classes are highlighted for targeted feature improvements.
+           <p class="text-gray-300 mb-4"> For flows flagged as “attack,” a multiclass <em>XGBoost</em> model determines the specific family (e.g. DDoS‑HTTP, SSH‑BruteForce, SQL Injection). Dominant classes reach F₁‑scores &gt; 0.99; weaker classes are highlighted for targeted feature improvements. </p>
         </li>
-        <li class="mb-4">
-          <strong>End‑to‑End Visualization</strong><br>
-          An interactive Sankey diagram illustrates how traffic splits through each stage—showing volumes for benign logs and every attack subtype.
-        </li>
-        <li>
-          <strong>Scalable &amp; Online‑Ready</strong><br>
-          Built in Jupyter with batch‑fit XGBoost, the same feature pipeline can be adapted to online variants (e.g. <em>MiniBatchKMeans</em>, <em>River</em>) for real‑time Security Operations ingestion.
-        </li>
+        <div class="flex flex-col items-center">
+          <h3 class="text-lg font-medium mb-2 text-white">Pipeline Overview</h3>
+          <img src="attackidprojectflow.png" 
+               alt="Two-stage pipeline flowchart" class="rounded-lg shadow-md">
+        </div>
       </ul>
     </section>
 
@@ -72,7 +70,7 @@
       <div class="space-y-6">
         <div>
           <h3 class="text-xl font-semibold text-white">Attack Identifier</h3>
-          <p class="text-gray-400 mb-2">
+          <p class="text-gray-300 mb-2">
             Applies a two-stage classification pipeline to identify attack types from NetFlow logs.
           </p>
           <a href="https://github.com/dataglancer/dataglancer.github.io/blob/main/attackidentifier/notebooks/attackidentifier.ipynb" class="text-mint hover:underline" target="_blank">
@@ -83,9 +81,9 @@
       </div>
     </section>
 
-    <!-- Example Visualizations -->
+    <!-- Visualizations -->
     <section class="mb-12">
-      <h2 class="text-2xl font-semibold text-mint mb-4">Example Visualizations</h2>
+      <h2 class="text-2xl font-semibold text-mint mb-4">Visualizations</h2>
       <p class="text-gray-400 mb-4">Key model outputs from the analysis:</p>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <!-- F1‑scores bar chart -->
