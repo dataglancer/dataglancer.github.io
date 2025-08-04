@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>John | Attack Identifier</title>
+  <title>John | NetFlow Profiling</title>
   <link rel="icon" href="mecutoutcyber_favicon.png" type="image/png" />
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <style>
@@ -19,7 +19,7 @@
   </style>
 </head>
 <body class="bg-black text-white">
-    <header class="fixed w-full bg-black bg-opacity-80 backdrop-blur text-white shadow-md z-50">
+  <header class="fixed w-full bg-black bg-opacity-80 backdrop-blur text-white shadow-md z-50">
     <div class="max-w-6xl mx-auto flex justify-between items-center px-8 py-4">
       <h1 class="text-2xl font-bold text-mint">John</h1>
       <nav class="space-x-6">
@@ -32,82 +32,77 @@
       </nav>
     </div>
   </header>
+
   <main class="max-w-5xl mx-auto p-6 pt-24">
-    
+
     <!-- Header -->
     <section class="mb-12">
-      <h1 class="text-4xl font-bold text-mint mb-2">Using Facial Recognition on Attacks in Netflow</h1>
-      <p class="text-gray-300">A novel approach to identifying attack types by analyzing patterns in NetFlow data.</p>
+      <h1 class="text-4xl font-bold text-mint mb-2">NetFlow Profiling with Eigenvector Anomaly Detection</h1>
+      <p class="text-gray-300">An unsupervised, image-inspired PCA approach to distinguish benign vs. multiple attack types in NetFlow data.</p>
     </section>
 
     <!-- Summary Section -->
     <section class="mb-12">
       <h2 class="text-2xl font-semibold text-mint mb-4">Project Overview</h2>
       <p class="text-gray-300 mb-4">
-        This project leverages facial recognition method of creating eigen profile on 'faces' of different attack types. The 'faces' in this case are unnsupervised machine learning cluster images. The source data are NetFlow (derrived from PCAPs) datasets, comprising benign traffic and multiple attack types. The source data was sourced from Canadian Institute for Cybersecurity (CIC) and the University of New Brunswick (UNB) (reference: https://www.unb.ca/cic/datasets/malmem-2020.html).
+        Traditional signature-based detection often misses novel or subtle threats.  
+        Inspired by facial-recognition “eigenfaces,” we reshape each 77-feature NetFlow record into a 300×300 grayscale array and train group-specific PCA models (“eigenprofiles”) for four attack families—credential abuse, denial-of-service, exploit/malware, and application-layer abuse—plus benign traffic.  
+        By measuring reconstruction error (L₂ norm) against each profile, we can both flag anomalies and infer attack type without any labeled training.
       </p>
-      <ul style="list-style: none; margin: 0; padding-left: 1.5em;">
-        <li class="mb-4">
-          <strong>Stage 1: Attack vs. Benign</strong><br>
-           <p class="text-gray-300 mb-4">
-          A binary <em>XGBoost</em> model flags each flow as “benign” or “attack,” achieving ~98 % accuracy and 0.99 AUC on hold‑out data with training times under 20 seconds.</p>
-        </li>
-        <li class="mb-4">
-          <strong>Stage 2: Attack Type Identification</strong><br>
-           <p class="text-gray-300 mb-4"> For flows flagged as “attack,” a multiclass <em>XGBoost</em> model determines the specific family (e.g. DDoS‑HTTP, SSH‑BruteForce, SQL Injection). Dominant classes reach F₁‑scores &gt; 0.99; weaker classes are highlighted for targeted feature improvements. </p>
-        </li>
-        <div class="flex flex-col items-center">
-          <h3 class="text-lg font-medium mb-2 text-white">Pipeline Overview</h3>
-          <img src="attackidprojectflow.png" 
-               alt="Two-stage pipeline flowchart" class="rounded-lg shadow-md">
-        </div>
-      </ul>
     </section>
 
     <!-- Highlights Section -->
     <section class="mb-12">
-      <h2 class="text-2xl font-semibold text-mint mb-4">Highlights</h2>
+      <h2 class="text-2xl font-semibold text-mint mb-4">Key Highlights</h2>
       <ul class="list-disc list-inside text-gray-300 space-y-2">
-        <li><strong>Early Detection:</strong> Flags anomalies at line‑rate so SOC teams can intervene before attacks escalate.</li>
-        <li><strong>Automated Triage:</strong> Auto‑classifies attack types, enabling analysts to prioritize DDoS, brute‑force, SQL exploits, or lateral‑movement probes.</li>
-        <li><strong>Resource Efficiency:</strong> Two‑stage logic minimizes multiclass inference to only suspicious flows, cutting compute costs and false alarms.</li>
-        <li><strong>Performance &amp; Scalability:</strong> Models train in seconds on millions of flows; easily evolves into streaming architectures without re‑engineering.</li>
-        <li><strong>Actionable Insights:</strong> Detailed per‑class metrics uncover blind spots (e.g. slow‑HTTP tests), guiding feature engineering and signature development.</li>
-        <li><strong>Clear Reporting:</strong> Bar charts and Sankey diagrams communicate model performance and traffic splits for dashboards, threat briefings, and compliance.</li>
+        <li><strong>Eigenprofile Modeling:</strong> Converts flow features into image-like inputs for PCA, enabling interpretable basis vectors.</li>
+        <li><strong>Unsupervised Detection:</strong> Differentiates benign vs. attack solely via reconstruction error—no labels needed in inference.</li>
+        <li><strong>Attack-Type Profiling:</strong> Four group-specific PCA models each best reconstruct their own attack class.</li>
+        <li><strong>Clear Separation:</strong> Reconstruction error distributions show strong separation between benign and every attack family.</li>
+        <li><strong>Scalable &amp; Lightweight:</strong> PCA fitting and inference are linear in data size, suitable for high-volume SOC pipelines.</li>
       </ul>
-    </section>
-
-    <!-- Notebooks Section -->
-    <section class="mb-12">
-      <h2 class="text-2xl font-semibold text-mint mb-4">Notebook</h2>
-      <div class="space-y-6">
-        <div>
-          <h3 class="text-xl font-semibold text-white">Attack Identifier</h3>
-          <p class="text-gray-300 mb-2">
-            Applies a two-stage classification pipeline to identify attack types from NetFlow logs.
-          </p>
-          <a href="https://github.com/dataglancer/dataglancer.github.io/blob/main/attackidentifier/notebooks/attackidentifier.ipynb" class="text-mint hover:underline" target="_blank">
-            View Notebook →
-          </a>
-        </div>
-        <!-- Add more notebook entries here -->
-      </div>
     </section>
 
     <!-- Visualizations -->
     <section class="mb-12">
-      <h2 class="text-2xl font-semibold text-mint mb-4">Visualizations</h2>
-      <p class="text-gray-400 mb-4">Key model outputs from the analysis:</p>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <!-- F1‑scores bar chart -->
-        <div class="flex flex-col items-center">
-          <h3 class="text-lg font-medium mb-2 text-white">F₁ Score by Class</h3>
-          <img src="output.png" alt="F1 Score by Class" class="rounded-lg shadow-md">
+      <h2 class="text-2xl font-semibold text-mint mb-4">Example Visualizations</h2>
+      <p class="text-gray-400 mb-4">Select outputs from the netflowprofiling analysis:</p>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        
+        <!-- Sample Attack Images -->
+        <div class="space-y-2">
+          <h3 class="text-lg font-medium text-white">Application-Layer Attack Samples</h3>
+          <div class="flex space-x-4">
+            <img src="images/Web1-Thursday_test2.png" alt="Web Attack Day 1" class="rounded shadow-md">
+            <img src="images/Web2-Friday_test2.png" alt="Web Attack Day 2" class="rounded shadow-md">
+          </div>
         </div>
-        <!-- Sankey diagram -->
-        <div class="flex flex-col items-center">
-          <h3 class="text-lg font-medium mb-2 text-white">Two‑Stage Classification Flow</h3>
-          <img src="newplot.png" alt="Two‑Stage Classification Sankey Diagram" class="rounded-lg shadow-md">
+
+        <!-- Reconstruction Comparison -->
+        <div class="space-y-2">
+          <h3 class="text-lg font-medium text-white">Original vs. PCA Reconstruction</h3>
+          <img src="images/Web2-Friday_test2_comparison_application.png" alt="Original vs Reconstructed" class="rounded shadow-md">
+        </div>
+
+        <!-- Error Distribution -->
+        <div class="md:col-span-2 space-y-2">
+          <h3 class="text-lg font-medium text-white">Reconstruction Error by Group</h3>
+          <img src="images/coloredreconerrorbyattack.png" alt="Error Box Plot" class="rounded shadow-md">
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Notebook Link -->
+    <section class="mb-12">
+      <h2 class="text-2xl font-semibold text-mint mb-4">Notebook</h2>
+      <div class="space-y-4">
+        <div>
+          <h3 class="text-xl font-semibold">NetFlow Profiling Analysis</h3>
+          <p class="text-gray-400 mb-2">Complete Jupyter notebook demonstrating data prep, PCA modeling, and error-based classification.</p>
+          <a href="notebooks/netflowprofiling.ipynb" class="text-mint hover:underline" target="_blank">
+            View Notebook →
+          </a>
         </div>
       </div>
     </section>
@@ -116,9 +111,9 @@
     <section class="mb-12">
       <h2 class="text-2xl font-semibold text-mint mb-4">Key Takeaways</h2>
       <ul class="list-disc list-inside text-gray-300 space-y-2">
-        <li>Different log types require tailored detection techniques—no one‑size‑fits‑all.</li>
-        <li>Effective pipelines hinge on robust preprocessing and domain‑aligned feature engineering.</li>
-        <li>Clear visualizations are critical for operational interpretation of model results.</li>
+        <li>PCA-based eigenprofiling robustly separates benign and multiple attack classes via error metrics.</li>
+        <li>Image-style encoding of flow data unlocks proven computer-vision tools for network security.</li>
+        <li>Unsupervised approach reduces reliance on labeled signatures and improves detection of novel threats.</li>
       </ul>
     </section>
 
