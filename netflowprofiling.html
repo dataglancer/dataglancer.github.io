@@ -47,7 +47,7 @@
       <p class="text-gray-300 mb-4">
         Traditional signature-based detection often misses novel or subtle threats.  
         Inspired by facial-recognition “eigenfaces,” we reshape each 77-feature NetFlow record into a 300×300 grayscale array and train group-specific PCA models (“eigenprofiles”) for four attack families—credential abuse, denial-of-service, exploit/malware, and application-layer abuse—plus benign traffic.  
-        By measuring reconstruction error (L₂ norm) against each profile, we can both flag anomalies and infer attack type without any labeled training.
+        By measuring reconstruction error (L2 norm) against each profile, we can both flag anomalies and infer attack type without any labeled training.
       </p>
     </section>
 
@@ -62,6 +62,27 @@
         <li><strong>Scalable &amp; Lightweight:</strong> PCA fitting and inference are linear in data size, suitable for high-volume SOC pipelines.</li>
       </ul>
     </section>
+
+  <!-- Pipeline Diagrams -->
+  <section class="mb-12">
+    <h2 class="text-2xl font-semibold text-mint mb-4">Pipeline Overview</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+      <!-- Prep & PCA -->
+      <div class="flex flex-col items-center bg-gray-900 p-4 rounded-lg shadow-md">
+        <h3 class="text-lg font-medium mb-2 text-white">Prep &amp; PCA</h3>
+        <img src="/netflowprofiling/images/flow1.png" alt="Prep & PCA Flowchart" class="rounded">
+      </div>
+
+      <!-- Detection & Clustering -->
+      <div class="flex flex-col items-center bg-gray-900 p-4 rounded-lg shadow-md">
+        <h3 class="text-lg font-medium mb-2 text-white">Detection &amp; Clustering</h3>
+        <img src="/netflowprofiling/images/flow2.png" alt="Detection & Clustering Flowchart" class="rounded">
+      </div>
+
+    </div>
+  </section>
+
 
     <!-- Visualizations -->
     <section class="mb-12">
