@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>LLM Abuse Detection via GPU Power Telemetry</title>
+  <link rel="icon" href="mecutoutcyber_favicon.png" type="image/png" />
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <style>
+    body { font-family: Helvetica, Arial, sans-serif; }
+    .text-mint { color: #00FFC3; }
+    .hover-mint:hover { color: #00FFC3; }
+    .border-mint { border-color: #00FFC3; }
+    .bg-mint { background-color: #00FFC3; }
+    .stat-card { border-left: 3px solid #00FFC3; }
+    .fig-caption {
+      font-size: 0.8rem;
+      color: #9ca3af;
+      text-align: center;
+      margin-top: 0.6rem;
+      font-style: italic;
+    }
+  </style>
+</head>
+<body class="bg-black text-white">
+
+  <header class="fixed w-full bg-black bg-opacity-80 backdrop-blur text-white shadow-md z-50">
+    <div class="max-w-6xl mx-auto flex justify-between items-center px-8 py-4">
+      <h1 class="text-xl font-bold text-mint">LLM Abuse Detection via GPU Power Telemetry</h1>
+      <nav class="space-x-6">
+        <a href="https://dataglancer.com/#home" class="hover-mint">Home</a>
+        <a href="https://dataglancer.com/#projects" class="hover-mint">Projects</a>
+        <a href="https://dataglancer.com/#experience" class="hover-mint">Experience</a>
+        <a href="https://dataglancer.com/#contact" class="hover-mint">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="max-w-4xl mx-auto p-6 pt-28">
+
+    <!-- Title Block -->
+    <section class="mb-12">
+      <p class="text-sm text-gray-500 uppercase tracking-widest mb-3">Research Paper · April 2026</p>
+      <h2 class="text-4xl font-bold text-white mb-2">LLM Abuse Detection via GPU Power Telemetry</h2>
+      <p class="text-xl text-mint mb-6">Hardware Signal Classification of Adversarial Inference Sessions</p>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-gray-400 mb-8">
+        <div>
+          <p class="text-gray-500 uppercase text-xs tracking-wide mb-1">Author</p>
+          <p>John Yater</p>
+        </div>
+        <div>
+          <p class="text-gray-500 uppercase text-xs tracking-wide mb-1">Institution</p>
+          <p>Georgia Institute of Technology</p>
+        </div>
+        <div>
+          <p class="text-gray-500 uppercase text-xs tracking-wide mb-1">Sponsor</p>
+          <p>Sandia National Laboratories</p>
+        </div>
+        <div>
+          <p class="text-gray-500 uppercase text-xs tracking-wide mb-1">Course</p>
+          <p>MGT 6748 — Applied Research Practicum</p>
+        </div>
+      </div>
+      <a href="LLM_Abuse_Detection_FINAL.pdf" target="_blank"
+         class="inline-block bg-mint text-black px-6 py-3 rounded-full font-semibold hover:drop-shadow-lg transition text-sm">
+        Download Full Paper (PDF) &darr;
+      </a>
+    </section>
+
+    <!-- Abstract -->
+    <section class="mb-12">
+      <h3 class="text-2xl font-semibold text-mint mb-4">Abstract</h3>
+      <div class="bg-gray-900 rounded-lg p-6 text-gray-300 leading-relaxed">
+        <p>
+          Content-based detection of abusive large language model (LLM) usage requires storing and analyzing
+          prompt and response text, introducing regulatory, privacy, and security risks. This work investigates
+          whether GPU hardware telemetry collected passively during inference contains sufficient signal to
+          classify sessions as benign or abusive without accessing content.
+        </p>
+        <p class="mt-4">
+          Telemetry was collected across 3,931 labeled inference sessions spanning three open-source models
+          (Llama-3.2-1B, Phi-3.5-mini, and Qwen2.5-7B), using HarmBench as the source of harmful prompts and
+          LMSYS-Chat-1M as the benign corpus. Classifiers trained on an 11-feature telemetry-only representation
+          achieve near-perfect in-distribution performance (AUC ≥ 0.999, FPR = 0.000) and generalize across
+          model architectures under shared hardware conditions.
+        </p>
+        <p class="mt-4">
+          However, performance degrades substantially under distribution shift — evaluation on 16,000
+          out-of-distribution sessions from WildJailbreak results in FPR ≈ 0.999, due to a shift in benign
+          power baselines. These results demonstrate that GPU telemetry contains a strong but environment-sensitive
+          signal for detecting abusive LLM inference, suggesting its role as a complementary, privacy-preserving
+          component within a broader defense ensemble rather than a standalone solution.
+        </p>
+      </div>
+    </section>
+
+    <!-- Key Findings -->
+    <section class="mb-12">
+      <h3 class="text-2xl font-semibold text-mint mb-6">Key Findings</h3>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div class="bg-gray-900 stat-card rounded-lg p-5">
+          <p class="text-3xl font-bold text-white mb-1">+65.0W</p>
+          <p class="text-mint text-sm font-semibold mb-2">+30.9% Mean GPU Power</p>
+          <p class="text-gray-400 text-sm">Abusive sessions consistently draw significantly more GPU power than benign queries across all tested models.</p>
+        </div>
+        <div class="bg-gray-900 stat-card rounded-lg p-5">
+          <p class="text-3xl font-bold text-white mb-1">AUC ≥ 0.999</p>
+          <p class="text-mint text-sm font-semibold mb-2">Near-Perfect In-Distribution</p>
+          <p class="text-gray-400 text-sm">All four classifiers achieve AUC ≥ 0.999 with FPR = 0.000 on held-out in-distribution test data.</p>
+        </div>
+        <div class="bg-gray-900 stat-card rounded-lg p-5">
+          <p class="text-3xl font-bold text-white mb-1">3,931</p>
+          <p class="text-mint text-sm font-semibold mb-2">Labeled Inference Sessions</p>
+          <p class="text-gray-400 text-sm">Dataset spans Llama-3.2-1B, Phi-3.5-mini, and Qwen2.5-7B with HarmBench harmful and LMSYS-Chat-1M benign prompts.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- The Signal: Power Distributions -->
+    <section class="mb-12">
+      <h3 class="text-2xl font-semibold text-mint mb-4">The Signal: Power Feature Distributions</h3>
+      <p class="text-gray-400 mb-6 leading-relaxed">
+        Abusive sessions impose a distinct computational load during harmful content generation. Across all three
+        models, power-related features show clear separation between benign (blue) and abusive (red) sessions —
+        with abusive sessions shifted toward higher wattage and tighter variance, consistent with sustained
+        compute demand.
+      </p>
+      <div class="bg-gray-900 rounded-lg p-4">
+        <img src="figures/fig_power_kde.png" alt="Power Feature Distributions — Benign vs Abuse across all models"
+             class="w-full rounded" />
+        <p class="fig-caption">Fig 1. KDE plots of power features (mean, max, std, per-token, AUC) across all models. Abusive sessions cluster at higher wattage with lower variance.</p>
+      </div>
+    </section>
+
+    <!-- Classifier Performance -->
+    <section class="mb-12">
+      <h3 class="text-2xl font-semibold text-mint mb-4">Classifier Performance</h3>
+      <p class="text-gray-400 mb-6 leading-relaxed">
+        Four classifiers — Random Forest, XGBoost, LightGBM, and a Neural Network — were trained on the
+        11-feature telemetry representation. All four achieve near-perfect ROC curves under in-distribution
+        conditions, with confusion matrices confirming zero false positives across the test set.
+      </p>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        <div class="bg-gray-900 rounded-lg p-4">
+          <img src="figures/fig_roc_curves.png" alt="ROC Curves — Abuse Detection Classifiers"
+               class="w-full rounded" />
+          <p class="fig-caption">Fig 2. ROC curves for all four classifiers on in-distribution test data. All achieve AUC ≥ 0.999.</p>
+        </div>
+        <div class="bg-gray-900 rounded-lg p-4">
+          <img src="figures/fig_confusion.png" alt="Confusion Matrices — Abuse Detection"
+               class="w-full rounded" />
+          <p class="fig-caption">Fig 3. Confusion matrices across all classifiers. FPR = 0.000, FNR = 0.009 on held-out test data.</p>
+        </div>
+      </div>
+      <div class="bg-gray-900 rounded-lg p-4">
+        <img src="figures/fig_nn_training.png" alt="Neural Network — Abuse Detector Training Curves"
+             class="w-full rounded" />
+        <p class="fig-caption">Fig 4. Neural network training loss (BCE) and validation ROC-AUC over 50 epochs. Best AUC = 0.9997, converging by epoch ~10.</p>
+      </div>
+    </section>
+
+    <!-- Feature Importance -->
+    <section class="mb-12">
+      <h3 class="text-2xl font-semibold text-mint mb-4">What Drives the Signal</h3>
+      <p class="text-gray-400 mb-6 leading-relaxed">
+        Power minimum (<code class="text-mint text-xs">power_min_w</code>), power range, and mean power are the
+        dominant features across both tree-based models. This makes physical sense: abusive sessions sustain
+        higher baseline power throughout inference, raising the floor and compressing variance relative to
+        benign queries which show more idle-time variation.
+      </p>
+      <div class="bg-gray-900 rounded-lg p-4 mb-6">
+        <img src="figures/fig_feature_corr.png" alt="Feature-Abuse Label Correlations across models"
+             class="w-full rounded" />
+        <p class="fig-caption">Fig 5. Pearson correlation between each telemetry feature and the abuse label across all three models. Power features show the strongest and most consistent signal.</p>
+      </div>
+      <div class="bg-gray-900 rounded-lg p-4">
+        <img src="figures/fig_feature_importance.png" alt="Feature Importance — Abuse Detection Models"
+             class="w-full rounded" />
+        <p class="fig-caption">Fig 6. Feature importance scores for Random Forest (MDI) and LightGBM (Gain). Power floor and range metrics dominate both models.</p>
+      </div>
+    </section>
+
+    <!-- Distribution Shift -->
+    <section class="mb-12">
+      <h3 class="text-2xl font-semibold text-mint mb-4">The Limitation: Distribution Shift</h3>
+      <p class="text-gray-400 mb-6 leading-relaxed">
+        Out-of-distribution evaluation on 16,000 WildJailbreak sessions reveals a critical failure mode.
+        The benign power baseline in the wild dataset overlaps heavily with the abusive range seen during
+        training — the classifier's learned boundary no longer separates the classes. This is an
+        environment-sensitivity problem, not a model problem, and points toward recalibration or
+        ensemble approaches as the path forward.
+      </p>
+      <div class="bg-gray-900 rounded-lg p-4">
+        <img src="figures/fig_wild_power_kde.png" alt="Power Distribution Shift: Training vs Wild"
+             class="w-full rounded" />
+        <p class="fig-caption">Fig 7. Training vs. WildJailbreak power distributions for Qwen2.5-7B. The benign baseline shifts into the abusive range, causing near-total classifier breakdown (FPR ≈ 0.999).</p>
+      </div>
+    </section>
+
+    <!-- Implications -->
+    <section class="mb-12">
+      <h3 class="text-2xl font-semibold text-mint mb-4">Implications</h3>
+      <div class="bg-gray-900 rounded-lg p-6 text-gray-300 leading-relaxed">
+        <p>
+          This approach offers three concrete benefits over content-based detection: it eliminates the sensitive
+          prompt data store entirely (reducing regulatory audit scope under the EU AI Act and CCPA), creates a
+          concentrated attack surface on the detection infrastructure rather than the inference stack, and
+          provides an early-termination signal detectable within the first inference window of a session.
+        </p>
+        <p class="mt-4">
+          Because the detection signal derives from hardware physics rather than prompt semantics, an adversary
+          cannot eliminate the underlying compute cost — though they may potentially reshape telemetry signatures
+          by altering query structure. The findings suggest GPU telemetry is best positioned as a complementary,
+          privacy-preserving component within a broader defense ensemble.
+        </p>
+      </div>
+    </section>
+
+    <!-- Download CTA -->
+    <section class="mb-16 text-center">
+      <div class="bg-gray-900 rounded-lg p-8">
+        <h3 class="text-xl font-semibold text-mint mb-3">Read the Full Paper</h3>
+        <p class="text-gray-400 mb-6 text-sm">Full methodology, results tables, and appendices available in the PDF.</p>
+        <a href="LLM_Abuse_Detection_FINAL.pdf" target="_blank"
+           class="inline-block bg-mint text-black px-8 py-3 rounded-full font-semibold hover:drop-shadow-lg transition">
+          Download PDF &darr;
+        </a>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="text-center text-sm text-gray-500 mt-8 mb-8">
+    <a href="https://dataglancer.com" class="hover-mint">&larr; Back to Portfolio</a>
+    <span class="mx-4">·</span>
+    &copy; 2026 John Yater
+  </footer>
+
+</body>
+</html>
