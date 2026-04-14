@@ -125,10 +125,18 @@
         with abusive sessions shifted toward higher wattage and tighter variance, consistent with sustained
         compute demand.
       </p>
-      <div class="bg-gray-900 rounded-lg p-4">
+      <div class="bg-gray-900 rounded-lg p-4 mb-6">
         <img src="figures/fig_power_kde.png" alt="Power Feature Distributions — Benign vs Abuse across all models"
              class="w-full rounded" />
         <p class="fig-caption">Fig 1. KDE plots of power features (mean, max, std, per-token, AUC) across all models. Abusive sessions cluster at higher wattage with lower variance.</p>
+      </div>
+      <p class="text-gray-400 mb-6 leading-relaxed">
+        Looking at the raw temporal signal reinforces this finding. The waveform overlay below plots 80 sampled power traces per class across normalized session time for each model. The separation is visible at a glance — abusive sessions (red) run consistently hotter throughout the session, while benign sessions (blue) fluctuate at a lower baseline. This temporal persistence is what makes the signal robust to single-sample noise.
+      </p>
+      <div class="bg-gray-900 rounded-lg p-4">
+        <img src="figures/fig_waveform_overlay.png" alt="GPU Power Waveform — Benign vs Abuse Sessions"
+             class="w-full rounded" />
+        <p class="fig-caption">Fig 2. GPU power waveforms sampled across normalized session time for LLAMA, Phi, and QWEN. Abusive sessions (red) sustain elevated power levels throughout; benign sessions (blue) show lower, more variable baselines.</p>
       </div>
     </section>
 
@@ -144,18 +152,34 @@
         <div class="bg-gray-900 rounded-lg p-4">
           <img src="figures/fig_roc_curves.png" alt="ROC Curves — Abuse Detection Classifiers"
                class="w-full rounded" />
-          <p class="fig-caption">Fig 2. ROC curves for all four classifiers on in-distribution test data. All achieve AUC ≥ 0.999.</p>
+          <p class="fig-caption">Fig 3. ROC curves for all four classifiers on in-distribution test data. All achieve AUC ≥ 0.999.</p>
         </div>
         <div class="bg-gray-900 rounded-lg p-4">
           <img src="figures/fig_confusion.png" alt="Confusion Matrices — Abuse Detection"
                class="w-full rounded" />
-          <p class="fig-caption">Fig 3. Confusion matrices across all classifiers. FPR = 0.000, FNR = 0.009 on held-out test data.</p>
+          <p class="fig-caption">Fig 4. Confusion matrices across all classifiers. FPR = 0.000, FNR = 0.009 on held-out test data.</p>
         </div>
+      </div>
+      <p class="text-gray-400 mb-6 leading-relaxed">
+        The radar chart below gives a direct side-by-side comparison of all four classifiers across five key metrics. The fact that all four models trace nearly identical polygons confirms that the signal quality — not model choice — is driving performance. Any reasonably expressive classifier can learn this boundary from telemetry features alone.
+      </p>
+      <div class="bg-gray-900 rounded-lg p-4 mb-6">
+        <img src="figures/fig_radar_comparison.png" alt="Classifier Comparison Radar Chart — All Models"
+             class="w-full rounded" />
+        <p class="fig-caption">Fig 5. Radar chart comparing all four classifiers on F1, Precision, AUC, Recall, and Low FPR. Near-identical polygons indicate the signal itself is the dominant factor, not the choice of model.</p>
+      </div>
+      <p class="text-gray-400 mb-6 leading-relaxed">
+        To understand <em>where</em> the classifier draws the line, the decision boundary plot below maps the Random Forest's learned separation in a 2D slice of feature space — power per token vs. GPU utilization. The white contours mark where the model transitions from benign to abusive predictions, with the background color showing predicted abuse probability. The clustering of red points (abuse) in the upper-right and blue points (benign) in the lower-left confirms that even two features alone carry substantial discriminative power.
+      </p>
+      <div class="bg-gray-900 rounded-lg p-4 mb-6">
+        <img src="figures/fig_decision_boundary.png" alt="RF Decision Boundary — Power per Token vs GPU Utilization"
+             class="w-full rounded" />
+        <p class="fig-caption">Fig 6. Random Forest decision boundary in the power-per-token × GPU utilization feature space. White contours show the classifier's abuse probability transitions; red = abusive sessions, blue = benign.</p>
       </div>
       <div class="bg-gray-900 rounded-lg p-4">
         <img src="figures/fig_nn_training.png" alt="Neural Network — Abuse Detector Training Curves"
              class="w-full rounded" />
-        <p class="fig-caption">Fig 4. Neural network training loss (BCE) and validation ROC-AUC over 50 epochs. Best AUC = 0.9997, converging by epoch ~10.</p>
+        <p class="fig-caption">Fig 7. Neural network training loss (BCE) and validation ROC-AUC over 50 epochs. Best AUC = 0.9997, converging by epoch ~10.</p>
       </div>
     </section>
 
@@ -171,12 +195,12 @@
       <div class="bg-gray-900 rounded-lg p-4 mb-6">
         <img src="figures/fig_feature_corr.png" alt="Feature-Abuse Label Correlations across models"
              class="w-full rounded" />
-        <p class="fig-caption">Fig 5. Pearson correlation between each telemetry feature and the abuse label across all three models. Power features show the strongest and most consistent signal.</p>
+        <p class="fig-caption">Fig 8. Pearson correlation between each telemetry feature and the abuse label across all three models. Power features show the strongest and most consistent signal.</p>
       </div>
       <div class="bg-gray-900 rounded-lg p-4">
         <img src="figures/fig_feature_importance.png" alt="Feature Importance — Abuse Detection Models"
              class="w-full rounded" />
-        <p class="fig-caption">Fig 6. Feature importance scores for Random Forest (MDI) and LightGBM (Gain). Power floor and range metrics dominate both models.</p>
+        <p class="fig-caption">Fig 9. Feature importance scores for Random Forest (MDI) and LightGBM (Gain). Power floor and range metrics dominate both models.</p>
       </div>
     </section>
 
@@ -193,7 +217,7 @@
       <div class="bg-gray-900 rounded-lg p-4">
         <img src="figures/fig_wild_power_kde.png" alt="Power Distribution Shift: Training vs Wild"
              class="w-full rounded" />
-        <p class="fig-caption">Fig 7. Training vs. WildJailbreak power distributions for Qwen2.5-7B. The benign baseline shifts into the abusive range, causing near-total classifier breakdown (FPR ≈ 0.999).</p>
+        <p class="fig-caption">Fig 10. Training vs. WildJailbreak power distributions for Qwen2.5-7B. The benign baseline shifts into the abusive range, causing near-total classifier breakdown (FPR ≈ 0.999).</p>
       </div>
     </section>
 
