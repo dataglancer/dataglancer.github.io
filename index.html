@@ -5,224 +5,650 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>John | Security Analytics</title>
   <link rel="icon" href="mecutoutcyber_favicon.png" type="image/png">
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
   <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #080b12;
+      --bg2: #0d1117;
+      --surface: #111827;
+      --border: rgba(99,232,232,0.12);
+      --cyan: #63e8e8;
+      --purple: #a78bfa;
+      --pink: #f472b6;
+      --text: #e2e8f0;
+      --muted: #7f8ea3;
+      --font: 'Space Grotesk', sans-serif;
+      --mono: 'Space Mono', monospace;
+    }
+
+    html { scroll-behavior: smooth; }
+
     body {
-      font-family: Helvetica, Arial, sans-serif;
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
     }
-    .text-mint {
-      color: #00FFC3;
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      padding: 1rem 2rem;
+      background: rgba(8, 11, 18, 0.75);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
     }
-    .hover-mint:hover {
-      color: #00FFC3;
+    nav a {
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    nav a:hover { color: var(--cyan); }
+
+    /* ── HERO ── */
+    #home {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    #particle-canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* radial vignette so text stays readable */
+    #home::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 70% 70% at 50% 50%,
+        transparent 30%,
+        rgba(8,11,18,0.55) 70%,
+        rgba(8,11,18,0.9) 100%);
+      pointer-events: none;
+    }
+
+    .hero-inner {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      gap: 4rem;
+      max-width: 900px;
+      padding: 0 2rem;
+    }
+
+    .hero-photo {
+      flex-shrink: 0;
+      width: 220px;
+      height: 260px;
+      position: relative;
+    }
+    .hero-photo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top center;
+      filter: drop-shadow(0 0 24px rgba(99,232,232,0.35)) drop-shadow(0 0 60px rgba(167,139,250,0.2));
+    }
+
+    /* animated corner brackets */
+    .hero-photo::before,
+    .hero-photo::after {
+      content: '';
+      position: absolute;
+      width: 28px; height: 28px;
+      border-color: var(--cyan);
+      border-style: solid;
+      opacity: 0.7;
+      animation: bracketPulse 3s ease-in-out infinite;
+    }
+    .hero-photo::before {
+      top: -6px; left: -6px;
+      border-width: 2px 0 0 2px;
+    }
+    .hero-photo::after {
+      bottom: -6px; right: -6px;
+      border-width: 0 2px 2px 0;
+      animation-delay: 1.5s;
+    }
+    @keyframes bracketPulse {
+      0%,100% { opacity: 0.5; }
+      50% { opacity: 1; }
+    }
+
+    .hero-text { flex: 1; }
+
+    .hero-eyebrow {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      color: var(--cyan);
+      text-transform: uppercase;
+      margin-bottom: 0.6rem;
+    }
+
+    .hero-name {
+      font-size: clamp(2.8rem, 6vw, 4.5rem);
+      font-weight: 700;
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+      color: #fff;
+      margin-bottom: 0.5rem;
+    }
+
+    .hero-title {
+      font-size: clamp(1rem, 2vw, 1.2rem);
+      font-weight: 500;
+      color: var(--purple);
+      margin-bottom: 1rem;
+    }
+
+    .hero-sub {
+      font-size: 0.95rem;
+      color: var(--muted);
+      max-width: 440px;
+      margin-bottom: 2rem;
+      line-height: 1.75;
+    }
+
+    .btn {
+      display: inline-block;
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.75rem 1.75rem;
+      border: 1px solid var(--cyan);
+      color: var(--cyan);
+      text-decoration: none;
+      transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+    }
+    .btn:hover {
+      background: rgba(99,232,232,0.08);
+      box-shadow: 0 0 20px rgba(99,232,232,0.25);
+    }
+
+    /* ── SECTIONS ── */
+    section {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 5rem 2rem;
+    }
+    section + section { border-top: 1px solid var(--border); }
+
+    .section-label {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      color: var(--cyan);
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+
+    h2 {
+      font-size: clamp(1.6rem, 3vw, 2rem);
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 2.5rem;
+      letter-spacing: -0.01em;
+    }
+
+    /* ── PROJECTS ── */
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1.25rem;
+    }
+
+    .project-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 1.75rem;
+      transition: border-color 0.25s, box-shadow 0.25s, transform 0.25s;
+    }
+    .project-card:hover {
+      border-color: rgba(99,232,232,0.4);
+      box-shadow: 0 0 30px rgba(99,232,232,0.08);
+      transform: translateY(-2px);
+    }
+
+    .project-card h4 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--cyan);
+      margin-bottom: 0.6rem;
+    }
+
+    .project-card p {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-bottom: 1.25rem;
+      line-height: 1.65;
+    }
+
+    .project-links { display: flex; flex-wrap: wrap; gap: 0.6rem; }
+    .project-links a {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--purple);
+      text-decoration: none;
+      border: 1px solid rgba(167,139,250,0.3);
+      padding: 0.3rem 0.7rem;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .project-links a:hover { color: var(--pink); border-color: var(--pink); }
+
+    /* ── EXPERIENCE ── */
+    .exp-list { display: flex; flex-direction: column; gap: 2.5rem; }
+    .exp-item { display: grid; grid-template-columns: 1fr 3fr; gap: 1.5rem; }
+    .exp-meta { font-family: var(--mono); font-size: 0.7rem; color: var(--muted); line-height: 1.8; }
+    .exp-meta strong { display: block; color: var(--cyan); font-size: 0.75rem; margin-bottom: 0.2rem; }
+    .exp-body h4 { font-size: 1rem; font-weight: 600; color: #fff; margin-bottom: 0.5rem; }
+    .exp-body ul { padding-left: 1.1rem; }
+    .exp-body li { font-size: 0.875rem; color: var(--muted); margin-bottom: 0.35rem; line-height: 1.65; }
+    .exp-body li::marker { color: var(--cyan); }
+
+    /* ── SKILLS ── */
+    .skills-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; }
+    .skill-group h3 {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--purple);
+      margin-bottom: 0.75rem;
+    }
+    .skill-group ul { list-style: none; }
+    .skill-group li {
+      font-size: 0.875rem;
+      color: var(--muted);
+      padding: 0.3rem 0;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+    .skill-group li a { color: var(--cyan); text-decoration: none; }
+    .skill-group li a:hover { color: var(--pink); }
+
+    /* ── EDUCATION ── */
+    .edu-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 2rem;
+      margin-bottom: 1.25rem;
+      transition: border-color 0.25s, box-shadow 0.25s, transform 0.25s;
+    }
+    .edu-card:hover {
+      border-color: rgba(99,232,232,0.4);
+      box-shadow: 0 0 30px rgba(99,232,232,0.08);
+      transform: translateY(-2px);
+    }
+    .edu-card h4 { font-size: 1rem; font-weight: 600; color: #fff; margin-bottom: 0.25rem; }
+    .edu-card .school { font-family: var(--mono); font-size: 0.75rem; color: var(--cyan); margin-bottom: 0.75rem; }
+    .edu-card p { font-size: 0.875rem; color: var(--muted); margin-bottom: 0.75rem; line-height: 1.65; }
+    .edu-card .courses {
+      font-size: 0.75rem;
+      color: var(--purple);
+      font-family: var(--mono);
+      letter-spacing: 0.03em;
+    }
+    .edu-card a { color: var(--cyan); text-decoration: none; }
+    .edu-card a:hover { color: var(--pink); }
+
+    /* ── CONTACT ── */
+    .contact-inner { text-align: center; }
+    .contact-inner p { color: var(--muted); margin-bottom: 2rem; }
+    .contact-links { display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap; }
+    .contact-links a {
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-decoration: none;
+      border: 1px solid var(--border);
+      padding: 0.65rem 1.5rem;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .contact-links a:hover { color: var(--cyan); border-color: var(--cyan); }
+
+    /* ── FOOTER ── */
+    footer {
+      text-align: center;
+      padding: 2rem;
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      color: rgba(127,142,163,0.4);
+      border-top: 1px solid var(--border);
+    }
+
+    @media (max-width: 640px) {
+      nav { gap: 1rem; flex-wrap: wrap; font-size: 0.65rem; }
+      .hero-inner { flex-direction: column; text-align: center; gap: 2rem; }
+      .hero-photo { width: 160px; height: 190px; }
+      .hero-sub { margin: 0 auto 2rem; }
+      .exp-item { grid-template-columns: 1fr; }
+      .skills-grid { grid-template-columns: 1fr 1fr; }
     }
   </style>
 </head>
-<body class="bg-black text-white">
-  <header class="fixed w-full bg-black bg-opacity-80 backdrop-blur text-white shadow-md z-50">
-    <div class="max-w-6xl mx-auto flex justify-between items-center px-8 py-4">
-      <h1 class="text-2xl font-bold text-mint">John</h1>
-      <nav class="space-x-6">
-        <a href="#home" class="hover-mint">Home</a>
-        <a href="#projects" class="hover-mint">Projects</a>
-        <a href="#experience" class="hover-mint">Experience</a>
-        <a href="#skills" class="hover-mint">Skills</a>
-        <a href="#education" class="hover-mint">Education</a>
-        <a href="#contact" class="hover-mint">Contact</a>
-      </nav>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#home">Home</a>
+  <a href="#projects">Projects</a>
+  <a href="#experience">Experience</a>
+  <a href="#skills">Skills</a>
+  <a href="#education">Education</a>
+  <a href="#contact">Contact</a>
+</nav>
+
+<!-- HERO -->
+<section id="home">
+  <canvas id="particle-canvas"></canvas>
+
+  <div class="hero-inner">
+    <div class="hero-photo">
+      <img src="mecutoutcyber.png" alt="John — cyberpunk portrait" />
     </div>
-  </header>
+    <div class="hero-text">
+      <p class="hero-eyebrow">// Security Analytics</p>
+      <h1 class="hero-name">John</h1>
+      <p class="hero-title">Security Analytics &amp; Detection Engineering</p>
+      <p class="hero-sub">Leveraging over a decade of cybersecurity experience with a modern data science skill set to build intelligent, secure systems.</p>
+      <a href="#projects" class="btn">View My Projects</a>
+    </div>
+  </div>
+</section>
 
-  <main class="max-w-5xl mx-auto p-6 pt-24">
-    <!-- Home Section -->
-    <section id="home" class="text-center py-20 px-8">
-      <div class="flex flex-col md:flex-row items-center justify-center gap-12">
-        
-        <!-- Avatar Image -->
-        <img src="mecutoutcyber.png" alt="Profile Image on cyberpunk theme">
-    
-        <!-- Welcome Text -->
-        <div>
-          <h2 class="text-4xl font-bold mb-4 text-mint">Security Analytics & Detection Engineering</h2>
-          <p class="text-lg text-gray-400 max-w-md mx-auto md:mx-0">
-            Leveraging over a decade of cybersecurity experience with a modern data science skill set to build intelligent, secure systems.
-          </p>
-          <div class="mt-8">
-            <a href="#projects" class="bg-mint text-black px-6 py-3 rounded-full font-semibold hover:drop-shadow-lg transition">
-              View My Projects
-            </a>
-          </div>
-        </div>
-    
+<!-- PROJECTS -->
+<section id="projects">
+  <p class="section-label">// 01 — Work</p>
+  <h2>Security Analytics Projects</h2>
+  <div class="projects-grid">
+
+    <div class="project-card">
+      <h4>Attack Triage Classifier</h4>
+      <p>Two-stage classification ensemble from "attack?" to "which kind?"</p>
+      <div class="project-links">
+        <a href="attackidentifier.html">View Project →</a>
       </div>
-    </section>
-    
+    </div>
 
-    <!-- Projects Section -->
-    <section id="projects" class="py-20 px-8">
-      <h2 class="text-4xl font-bold text-center text-mint mb-12">Security Analytics Projects</h2>
-      <div class="grid grid-cols-1 gap-8">
-        <!-- Security Projects Card -->
-        <div class="bg-gray-900 rounded-lg p-6 shadow-lg">
-          <!-- Project Card -->
-          <div class="bg-black border border-gray-700 rounded-md p-4 mb-4">
-            <h4 class="text-xl font-semibold text-white mb-1">Attack Triage Classifier</h4>
-            <p class="text-gray-400 text-sm mb-2">
-              Two-stage classification ensemble from “attack?” to “which kind?”
-            </p>
-            <a href="attackidentifier.html" class="text-mint hover:underline text-sm">View Project &rarr;</a>
-          </div>
-                    <div class="bg-black border border-gray-700 rounded-md p-4 mb-4">
-            <h4 class="text-xl font-semibold text-white mb-1">EigenFlow Profiler </h4>
-            <p class="text-gray-400 text-sm mb-2">
-              Using facial recognition approach to identifying attack types in NetFlow data. 
-            </p>
-            <a href="netflowprofiling.html" class="text-mint hover:underline text-sm">View Project &rarr;</a>
-          </div>
-  <div class="bg-black border border-gray-700 rounded-md p-4 mb-4">
-            <h4 class="text-xl font-semibold text-white mb-1">LLM Abuse Detection via GPU Power Telemetry</h4>
-            <p class="text-gray-400 text-sm mb-2">
-              Classifying adversarial LLM inference sessions using passive GPU hardware telemetry — no prompt content required. AUC ≥ 0.999 across 3,931 labeled sessions.
-            </p>
-            <div class="flex gap-4 flex-wrap">
-              <a href="llm_abuse_detection.html" class="text-mint hover:underline text-sm">View Project &rarr;</a>
-              <a href="LLM_Abuse_Detection_FINAL.pdf" target="_blank" class="text-gray-400 hover:text-white hover:underline text-sm">Download PDF &darr;</a>
-              <a href="https://github.com/dataglancer/llmabusedetection" target="_blank" class="text-gray-400 hover:text-white hover:underline text-sm">GitHub &rarr;</a>
-            </div>
-          </div>
-          <!-- Future projects can be added here as more divs -->
-        </div>
-      </div>      
-
-    </section>
-
-
-
-    <!-- Experience Section -->
-    <section id="experience" class="py-20 px-8">
-      <h2 class="text-4xl font-bold text-center text-mint mb-12">Experience</h2>
-      <div class="space-y-8">
-        <div class="bg-gray-900 rounded-lg p-6 shadow-lg">
-          <h4 class="text-xl font-semibold">Manager &#8702 Sr. Manager &#8702 Director</h4>
-          <p class="text-gray-400"><em>Cloud Platform Service Provider</em> • Oct 2017 – June 2023 </p>
-          <ul class="list-disc list-inside text-gray-400 mt-2">
-            <li>Recruited, hired, and mentored 3 teams of security engineers & intelligence analysts.</li>
-            <li>Created CI/CD pipeline of detections using statistical learning and traditional pattern matching techniques.</li>
-            <li>Collaborated across departments to implement secure design reviews.</li>
-            <li>Developed internal Intelligence products based off stakeholder input.</li>
-            <li>Prototyped and drove implementation of new detections during major security incidents.</li>
-            <li>Developed individual and team goals aligning with executive leadership vision</li>
-          </ul>
-        </div>
-        <div class="bg-gray-900 rounded-lg p-6 shadow-lg">
-          <h4 class="text-xl font-semibold">Lead Security Incident Response Engineer</h4>
-          <p class="text-gray-400"><em>Cloud Platform Service Provider</em> • July 2015 – Oct 2017</p>
-          <ul class="list-disc list-inside text-gray-400 mt-2">
-            <li>Developed and monitored security dashboards and alerts using SIEM tools.</li>
-            <li>Conducted forensic analysis and incident response exercises.</li>
-            <li>Automated compliance checks and reporting workflows.</li>
-            <li>Led incident bridge calls for major incidents.</li>
-          </ul>
-        </div>
-        <div class="bg-gray-900 rounded-lg p-6 shadow-lg">
-          <h4 class="text-xl font-semibold">Security Operations Center Analyst</h4>
-            <p class="text-gray-400"><em>Several Large Enterprises</em> • July 2010 – July 2015</p>
-          <ul class="list-disc list-inside text-gray-400 mt-2">
-            <li>Monitored threats and evaluated SIEM alerts.</li>
-            <li>Automated repetitive tasks through Python scripting.</li>
-            <li>Mentored entry-level analysts on best practices.</li>
-          </ul>
-        </div>
+    <div class="project-card">
+      <h4>EigenFlow Profiler</h4>
+      <p>Using a facial recognition approach to identifying attack types in NetFlow data.</p>
+      <div class="project-links">
+        <a href="netflowprofiling.html">View Project →</a>
       </div>
-    </section>
+    </div>
 
-    <!-- Skills Section -->
-    <section id="skills" class="py-20 px-8">
-      <h2 class="text-4xl font-bold text-center text-mint mb-12">Skills</h2>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-        <div class="bg-gray-900 rounded-lg p-6 shadow-lg">
-          <h3 class="text-2xl font-semibold text-mint mb-2">Programming</h3>
-          <ul class="list-disc list-inside text-gray-400">
-            <li>Python</li>
-            <li>SQL</li>
-            <li>Bash / Command Line</li>
-          </ul>
-        </div>
-        <div class="bg-gray-900 rounded-lg p-6 shadow-lg">
-          <h3 class="text-2xl font-semibold text-mint mb-2">Libraries / Frameworks</h3>
-          <ul class="list-disc list-inside text-gray-400">
-            <li>pandas, NumPy</li>
-            <li>scikit-learn</li>
-            <li>matplotlib, seaborn, Plotly</li>
-          </ul>
-        </div>
-        <div class="bg-gray-900 rounded-lg p-6 shadow-lg">
-          <h3 class="text-2xl font-semibold text-mint mb-2">Visualizations</h3>
-          <ul class="list-disc list-inside text-gray-400">
-            <li><a href="https://public.tableau.com/app/profile/johnathan.yater/vizzes" target="_blank" class="hover:text-white hover:underline">Tableau Public</a></li>
-            <li><a href="interactive_plots.html" class="hover:text-white hover:underline">Interactive 3D Plots (Plotly)</a></li>
-          </ul>
-        </div>
+    <div class="project-card">
+      <h4>LLM Abuse Detection via GPU Power Telemetry</h4>
+      <p>Classifying adversarial LLM inference sessions using passive GPU hardware telemetry — no prompt content required. AUC ≥ 0.999 across 3,931 labeled sessions.</p>
+      <div class="project-links">
+        <a href="llm_abuse_detection.html">View Project →</a>
+        <a href="LLM_Abuse_Detection_FINAL.pdf" target="_blank">Download PDF ↓</a>
+        <a href="https://github.com/dataglancer/llmabusedetection" target="_blank">GitHub →</a>
       </div>
-    </section>
+    </div>
 
-    <!-- Education Section -->
-    <section id="education" class="py-20 px-8">
-      <h2 class="text-4xl font-bold text-center text-mint mb-12">Education</h2>
-      <div class="space-y-8">
-        <div class="bg-gray-900 rounded-lg p-6 shadow-lg">
-          <div class="flex justify-between items-start flex-wrap gap-2 mb-1">
-            <h4 class="text-xl font-semibold">Online Master of Science in Analytics (OMSA)</h4>
-            <a href="https://analytics.gatech.edu" target="_blank" class="text-mint hover:underline text-sm">Program Info &rarr;</a>
-          </div>
-          <p class="text-gray-400">Georgia Institute of Technology • Expected May 2026</p>
-          <p class="text-gray-400 mt-2">
-            One of the most rigorous and respected online analytics programs in the country, combining
-            statistics, machine learning, and business analytics at scale. Offered jointly by the
-            College of Engineering and the Scheller College of Business.
-          </p>
-          <div class="mt-3">
-            <p class="text-gray-500 text-xs uppercase tracking-wide mb-1">Relevant Coursework</p>
-            <p class="text-gray-400 text-sm">Machine Learning · Regression Analysis · Data &amp; Visual Analytics · Simulation · High-Dimensional Data Analytics · Applied Analytics Practicum</p>
-          </div>
-        </div>
-        <div class="bg-gray-900 rounded-lg p-6 shadow-lg">
-          <h4 class="text-xl font-semibold">B.S. in Kinesiology</h4>
-          <p class="text-gray-400">San Jose State University • 2008</p>
-          <p class="text-gray-400">Emphasis in human performance and movement science. Led to an early career interest in physical therapy through applied exercise science.</p>
-        </div>
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section id="experience">
+  <p class="section-label">// 02 — Background</p>
+  <h2>Experience</h2>
+  <div class="exp-list">
+
+    <div class="exp-item">
+      <div class="exp-meta">
+        <strong>Cloud Platform Service Provider</strong>
+        Oct 2017 – June 2023
       </div>
-    </section>
-
-    <!-- Contact Section -->
-    <section id="contact" class="py-20 px-8 text-center">
-      <h2 class="text-4xl font-bold text-center text-mint mb-12">Contact</h2>
-      <div class="bg-gray-900 rounded-lg p-6 shadow-lg max-w-xl mx-auto">
-        <p class="text-lg text-gray-400 mb-6">I'm always open to connecting! Feel free to reach out via email or LinkedIn.</p>
-        <div class="space-y-4">
-          <div>
-            <a href="mailto:John.Yater@gmail.com" class="text-mint hover:underline">John.Yater@gmail.com</a>
-          </div>
-          <div>
-            <a href="https://www.linkedin.com/in/john-yater-b075a19/" target="_blank" class="text-mint hover:underline">
-              LinkedIn
-            </a>
-          </div>
-          <div>
-            <a href="https://github.com/dataglancer" target="_blank" class="text-mint hover:underline">
-              GitHub
-            </a>
-          </div>
-        </div>
+      <div class="exp-body">
+        <h4>Manager → Sr. Manager → Director</h4>
+        <ul>
+          <li>Recruited, hired, and mentored 3 teams of security engineers &amp; intelligence analysts.</li>
+          <li>Created CI/CD pipeline of detections using statistical learning and traditional pattern matching techniques.</li>
+          <li>Collaborated across departments to implement secure design reviews.</li>
+          <li>Developed internal Intelligence products based off stakeholder input.</li>
+          <li>Prototyped and drove implementation of new detections during major security incidents.</li>
+          <li>Developed individual and team goals aligning with executive leadership vision.</li>
+        </ul>
       </div>
-    </section>
+    </div>
 
-  </main>
+    <div class="exp-item">
+      <div class="exp-meta">
+        <strong>Cloud Platform Service Provider</strong>
+        July 2015 – Oct 2017
+      </div>
+      <div class="exp-body">
+        <h4>Lead Security Incident Response Engineer</h4>
+        <ul>
+          <li>Developed and monitored security dashboards and alerts using SIEM tools.</li>
+          <li>Conducted forensic analysis and incident response exercises.</li>
+          <li>Automated compliance checks and reporting workflows.</li>
+          <li>Led incident bridge calls for major incidents.</li>
+        </ul>
+      </div>
+    </div>
 
-  <footer class="text-center text-sm text-gray-500 mt-16 mb-8">
-    &copy; 2026 John Yater. Built with Tailwind CSS.
-  </footer>
+    <div class="exp-item">
+      <div class="exp-meta">
+        <strong>Several Large Enterprises</strong>
+        July 2010 – July 2015
+      </div>
+      <div class="exp-body">
+        <h4>Security Operations Center Analyst</h4>
+        <ul>
+          <li>Monitored threats and evaluated SIEM alerts.</li>
+          <li>Automated repetitive tasks through Python scripting.</li>
+          <li>Mentored entry-level analysts on best practices.</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills">
+  <p class="section-label">// 03 — Stack</p>
+  <h2>Skills</h2>
+  <div class="skills-grid">
+    <div class="skill-group">
+      <h3>Programming</h3>
+      <ul>
+        <li>Python</li>
+        <li>SQL</li>
+        <li>Bash / Command Line</li>
+      </ul>
+    </div>
+    <div class="skill-group">
+      <h3>Libraries / Frameworks</h3>
+      <ul>
+        <li>pandas, NumPy</li>
+        <li>scikit-learn</li>
+        <li>matplotlib, seaborn, Plotly</li>
+      </ul>
+    </div>
+    <div class="skill-group">
+      <h3>Visualizations</h3>
+      <ul>
+        <li><a href="https://public.tableau.com/app/profile/johnathan.yater/vizzes" target="_blank">Tableau Public</a></li>
+        <li><a href="interactive_plots.html">Interactive 3D Plots (Plotly)</a></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- EDUCATION -->
+<section id="education">
+  <p class="section-label">// 04 — Learning</p>
+  <h2>Education</h2>
+
+  <div class="edu-card">
+    <h4>Online Master of Science in Analytics (OMSA)</h4>
+    <div class="school">Georgia Institute of Technology · Expected May 2026 &nbsp;·&nbsp; <a href="https://analytics.gatech.edu" target="_blank">Program Info →</a></div>
+    <p>One of the most rigorous and respected online analytics programs in the country, combining statistics, machine learning, and business analytics at scale. Offered jointly by the College of Engineering and the Scheller College of Business.</p>
+    <div class="courses">Machine Learning · Regression Analysis · Data &amp; Visual Analytics · Simulation · High-Dimensional Data Analytics · Applied Analytics Practicum</div>
+  </div>
+
+  <div class="edu-card">
+    <h4>B.S. in Kinesiology</h4>
+    <div class="school">San Jose State University · 2008</div>
+    <p>Emphasis in human performance and movement science. Led to an early career interest in physical therapy through applied exercise science.</p>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <p class="section-label">// 05 — Connect</p>
+  <h2>Contact</h2>
+  <div class="contact-inner">
+    <p>I'm always open to connecting! Feel free to reach out via email or LinkedIn.</p>
+    <div class="contact-links">
+      <a href="mailto:John.Yater@gmail.com">John.Yater@gmail.com</a>
+      <a href="https://www.linkedin.com/in/john-yater-b075a19/" target="_blank">LinkedIn</a>
+      <a href="https://github.com/dataglancer" target="_blank">GitHub</a>
+    </div>
+  </div>
+</section>
+
+<footer>© 2026 John Yater &nbsp;·&nbsp; Built with Space Grotesk + vanilla JS</footer>
+
+<script>
+(function () {
+  const canvas = document.getElementById('particle-canvas');
+  const ctx = canvas.getContext('2d');
+
+  const COUNT      = 90;
+  const MAX_DIST   = 150;
+  const SPEED      = 0.35;
+  const NODE_R     = 1.6;
+  const LINE_WIDTH = 0.6;
+  const MOUSE_PULL = 0.012;
+  const MOUSE_DIST = 180;
+
+  const COLORS = [
+    [99,  232, 232],   // cyan
+    [167, 139, 250],   // purple
+    [244, 114, 182],   // pink
+  ];
+
+  let W, H, mouse = { x: -9999, y: -9999 };
+  let particles = [];
+
+  function resize() {
+    W = canvas.width  = canvas.offsetWidth;
+    H = canvas.height = canvas.offsetHeight;
+  }
+
+  function rand(min, max) { return min + Math.random() * (max - min); }
+
+  function makeParticle() {
+    const col = COLORS[Math.floor(Math.random() * COLORS.length)];
+    return {
+      x: rand(0, W), y: rand(0, H),
+      vx: rand(-SPEED, SPEED), vy: rand(-SPEED, SPEED),
+      r: rand(0.8, NODE_R), col,
+      alpha: rand(0.4, 0.9),
+    };
+  }
+
+  function init() {
+    resize();
+    particles = Array.from({ length: COUNT }, makeParticle);
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+
+    for (const p of particles) {
+      const dx = mouse.x - p.x, dy = mouse.y - p.y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist < MOUSE_DIST && dist > 0) {
+        const force = (1 - dist / MOUSE_DIST) * MOUSE_PULL;
+        p.vx += dx / dist * force;
+        p.vy += dy / dist * force;
+      }
+      p.vx *= 0.999; p.vy *= 0.999;
+      const spd = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
+      if (spd > SPEED * 1.8) { p.vx = (p.vx / spd) * SPEED * 1.8; p.vy = (p.vy / spd) * SPEED * 1.8; }
+      p.x += p.vx; p.y += p.vy;
+      if (p.x < 0) p.x = W; if (p.x > W) p.x = 0;
+      if (p.y < 0) p.y = H; if (p.y > H) p.y = 0;
+    }
+
+    for (let i = 0; i < particles.length; i++) {
+      for (let j = i + 1; j < particles.length; j++) {
+        const a = particles[i], b = particles[j];
+        const dx = a.x - b.x, dy = a.y - b.y;
+        const d = Math.sqrt(dx * dx + dy * dy);
+        if (d > MAX_DIST) continue;
+        const alpha = (1 - d / MAX_DIST) * 0.35;
+        const cr = Math.round((a.col[0] + b.col[0]) / 2);
+        const cg = Math.round((a.col[1] + b.col[1]) / 2);
+        const cb = Math.round((a.col[2] + b.col[2]) / 2);
+        ctx.beginPath();
+        ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y);
+        ctx.strokeStyle = `rgba(${cr},${cg},${cb},${alpha})`;
+        ctx.lineWidth = LINE_WIDTH;
+        ctx.stroke();
+      }
+    }
+
+    for (const p of particles) {
+      const grd = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r * 4);
+      grd.addColorStop(0, `rgba(${p.col[0]},${p.col[1]},${p.col[2]},${p.alpha * 0.6})`);
+      grd.addColorStop(1, `rgba(${p.col[0]},${p.col[1]},${p.col[2]},0)`);
+      ctx.beginPath(); ctx.arc(p.x, p.y, p.r * 4, 0, Math.PI * 2);
+      ctx.fillStyle = grd; ctx.fill();
+      ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(${p.col[0]},${p.col[1]},${p.col[2]},${p.alpha})`;
+      ctx.fill();
+    }
+
+    requestAnimationFrame(draw);
+  }
+
+  init(); draw();
+
+  window.addEventListener('resize', resize);
+  document.getElementById('home').addEventListener('mousemove', e => {
+    const rect = canvas.getBoundingClientRect();
+    mouse.x = e.clientX - rect.left;
+    mouse.y = e.clientY - rect.top;
+  });
+  document.getElementById('home').addEventListener('mouseleave', () => {
+    mouse.x = -9999; mouse.y = -9999;
+  });
+})();
+</script>
 
 </body>
 </html>
-
