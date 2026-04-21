@@ -270,24 +270,67 @@
     .exp-body li::marker { color: var(--cyan); }
 
     /* ── SKILLS ── */
-    .skills-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; }
+    .skills-subsection-label {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--cyan);
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0.5rem;
+      margin-bottom: 1.25rem;
+      margin-top: 2.5rem;
+    }
+    .skills-subsection-label:first-of-type { margin-top: 0; }
+    .skills-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-bottom: 0.5rem; }
+    .skill-group {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 1.25rem 1.5rem;
+    }
     .skill-group h3 {
       font-family: var(--mono);
-      font-size: 0.7rem;
-      letter-spacing: 0.15em;
+      font-size: 0.68rem;
+      letter-spacing: 0.12em;
       text-transform: uppercase;
       color: var(--purple);
       margin-bottom: 0.75rem;
     }
     .skill-group ul { list-style: none; }
     .skill-group li {
-      font-size: 0.875rem;
+      font-size: 0.85rem;
       color: var(--muted);
-      padding: 0.3rem 0;
+      padding: 0.28rem 0;
       border-bottom: 1px solid rgba(255,255,255,0.04);
     }
-    .skill-group li a { color: var(--cyan); text-decoration: none; }
+    .skill-group li:last-child { border-bottom: none; }
+    .skill-group li a { color: var(--cyan); text-decoration: none; transition: color 0.2s; }
     .skill-group li a:hover { color: var(--pink); }
+
+    /* focus areas */
+    .focus-tags { display: flex; flex-wrap: wrap; gap: 0.6rem; }
+    .focus-tag {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--cyan);
+      border: 1px solid rgba(99,232,232,0.25);
+      padding: 0.35rem 0.85rem;
+    }
+
+    /* applied experience */
+    .applied-list { list-style: none; padding: 0; }
+    .applied-list li {
+      font-size: 0.9rem;
+      color: var(--muted);
+      padding: 0.6rem 0 0.6rem 1.25rem;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      position: relative;
+      line-height: 1.6;
+    }
+    .applied-list li:last-child { border-bottom: none; }
+    .applied-list li::before { content: '▸'; position: absolute; left: 0; color: var(--cyan); font-size: 0.7rem; top: 0.75rem; }
 
     /* ── EDUCATION ── */
     .edu-card {
@@ -479,31 +522,110 @@
 <section id="skills">
   <p class="section-label">// 03 — Stack</p>
   <h2>Skills</h2>
+
+  <!-- Technical Skills -->
+  <p class="skills-subsection-label">Technical Skills</p>
   <div class="skills-grid">
+
     <div class="skill-group">
-      <h3>Programming</h3>
+      <h3>Programming &amp; Data Science</h3>
       <ul>
-        <li>Python</li>
-        <li>SQL</li>
-        <li>Bash / Command Line</li>
+        <li>Python (pandas, NumPy, scikit-learn)</li>
+        <li>R</li>
+        <li>SQL (advanced querying, joins, aggregations)</li>
+        <li>Feature engineering &amp; data preprocessing</li>
+        <li>Statistical analysis &amp; hypothesis testing</li>
       </ul>
     </div>
+
     <div class="skill-group">
-      <h3>Libraries / Frameworks</h3>
+      <h3>Machine Learning &amp; AI</h3>
       <ul>
-        <li>pandas, NumPy</li>
-        <li>scikit-learn</li>
-        <li>matplotlib, seaborn, Plotly</li>
+        <li>Supervised learning (classification, regression)</li>
+        <li>Model evaluation (ROC, AUC, precision/recall, cross-validation)</li>
+        <li>Ensemble methods (Random Forest, XGBoost)</li>
+        <li>Dimensionality reduction (PCA, UMAP)</li>
+        <li>Anomaly detection techniques</li>
+        <li>LLM evaluation &amp; adversarial testing (jailbreaking, red teaming)</li>
       </ul>
     </div>
+
     <div class="skill-group">
-      <h3>Visualizations</h3>
+      <h3>Security Analytics &amp; Detection Engineering</h3>
       <ul>
-        <li><a href="https://public.tableau.com/app/profile/johnathan.yater/vizzes" target="_blank">Tableau Public</a></li>
+        <li>Detection engineering (rule-based &amp; behavior-based)</li>
+        <li>Threat modeling &amp; attack mapping (MITRE ATT&amp;CK)</li>
+        <li>SIEM development (Splunk, Elastic / ELK Stack)</li>
+        <li>Log analysis &amp; telemetry pipelines</li>
+        <li>Network traffic analysis</li>
+        <li>DFIR workflows and investigation techniques</li>
+      </ul>
+    </div>
+
+    <div class="skill-group">
+      <h3>Data Engineering &amp; Pipelines</h3>
+      <ul>
+        <li>Data ingestion &amp; transformation</li>
+        <li>Large-scale datasets (CSV, Parquet, log data)</li>
+        <li>ETL / ELT concepts</li>
+        <li>API-based data collection</li>
+        <li>Structured and semi-structured data processing</li>
+      </ul>
+    </div>
+
+    <div class="skill-group">
+      <h3>Cloud &amp; Infrastructure</h3>
+      <ul>
+        <li>AWS (EC2, S3, IAM fundamentals)</li>
+        <li>GCP (Dataproc, Cloud Storage)</li>
+        <li>Azure fundamentals</li>
+        <li>Linux systems &amp; scripting</li>
+        <li>Virtualization / homelab (Proxmox)</li>
+      </ul>
+    </div>
+
+    <div class="skill-group">
+      <h3>Visualization &amp; Communication</h3>
+      <ul>
+        <li><a href="https://public.tableau.com/app/profile/johnathan.yater/vizzes" target="_blank">Tableau</a></li>
+        <li>Power BI</li>
+        <li>Data storytelling &amp; dashboard design</li>
+        <li>Communicating technical concepts to non-technical audiences</li>
         <li><a href="interactive_plots.html">Interactive 3D Plots (Plotly)</a></li>
       </ul>
     </div>
+
+    <div class="skill-group">
+      <h3>Tools &amp; Development</h3>
+      <ul>
+        <li>Git / GitHub</li>
+        <li>Jupyter Notebooks</li>
+        <li>REST APIs</li>
+        <li>Agile / Scrum workflows</li>
+        <li>ServiceNow</li>
+      </ul>
+    </div>
+
   </div>
+
+  <!-- Focus Areas -->
+  <p class="skills-subsection-label">Focus Areas</p>
+  <div class="focus-tags">
+    <span class="focus-tag">AI Security &amp; LLM Abuse Detection</span>
+    <span class="focus-tag">Security Analytics &amp; Detection Engineering</span>
+    <span class="focus-tag">Anomaly Detection in Network Traffic</span>
+    <span class="focus-tag">Applied ML for Cybersecurity</span>
+  </div>
+
+  <!-- Applied Experience -->
+  <p class="skills-subsection-label">Applied Experience</p>
+  <ul class="applied-list">
+    <li>Built LLM red-teaming pipelines using HarmBench and adversarial datasets</li>
+    <li>Designed telemetry-driven features for detecting LLM abuse via GPU power signals</li>
+    <li>Developed classification models for cyberattack detection across NetFlow and log data</li>
+    <li>Applied clustering and dimensionality reduction to network traffic data</li>
+  </ul>
+
 </section>
 
 <!-- EDUCATION -->
