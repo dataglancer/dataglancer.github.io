@@ -106,24 +106,25 @@
   <div class="page-header">
     <p class="page-label">// Security Analytics Project</p>
     <h1>Attack Triage Classifier</h1>
-    <p class="subtitle">A modular machine learning system for identifying attacks across log types.</p>
+    <p class="subtitle">A two-stage XGBoost pipeline that first detects attacks, then identifies which kind — trained on 6.6 million real NetFlow records.</p>
   </div>
 
   <!-- Overview -->
   <div class="content-section">
     <h2>Project Overview</h2>
-    <p>This project ingests high-volume NetFlow/PCAP-derived datasets — comprising benign traffic and multiple attack types — and delivers a two-stage classification system. Source data from the Canadian Institute for Cybersecurity (CIC) and the University of New Brunswick (UNB).</p>
+    <p>The goal of this project is to build a practical, high-performance classifier that can handle the full triage workflow a SOC analyst faces: first, is this flow an attack at all? And if so, what kind? Rather than collapsing everything into one multiclass problem, the pipeline uses two chained <strong>XGBoost</strong> models — one binary, one multiclass — so each stage can be tuned, evaluated, and replaced independently.</p>
+    <p>All 10 source files are concatenated into a single dataset, an 80/20 train/test split is made (stratified on the binary target to preserve class ratios), and both models are trained on the same split for a fair end-to-end evaluation.</p>
 
     <div class="stage">
       <div class="stage-label">Stage 01</div>
       <h3>Attack vs. Benign</h3>
-      <p>A binary <em>XGBoost</em> model flags each flow as "benign" or "attack," achieving ~98% accuracy and 0.99 AUC on hold-out data with training times under 20 seconds.</p>
+      <p>A binary <em>XGBoost</em> classifier is trained to flag each flow as "benign" or "attack." It achieves ~98% accuracy and 0.99 AUC on held-out data and trains on millions of flows in under 20 seconds on commodity hardware.</p>
     </div>
 
     <div class="stage">
       <div class="stage-label">Stage 02</div>
       <h3>Attack Type Identification</h3>
-      <p>For flows flagged as "attack," a multiclass <em>XGBoost</em> model determines the specific family (e.g. DDoS-HTTP, SSH-BruteForce, SQL Injection). Dominant classes reach F₁-scores &gt; 0.99; weaker classes are highlighted for targeted feature improvements.</p>
+      <p>Flows predicted as "attack" by Stage 1 are passed to a multiclass <em>XGBoost</em> model trained exclusively on attack-labeled flows. It outputs one of 14 specific attack labels — DDoS-HTTP, SSH-BruteForce, SQL Injection, Bot, Infiltration, and more. Dominant classes reach F₁ &gt; 0.99; minority classes with very few training samples (e.g. FTP-BruteForce: 53 records, SQL Injection: 85 records) show lower scores, highlighting the real-world challenge of long-tail attack distributions.</p>
     </div>
 
     <div class="img-block" style="margin-top:1.5rem;">
@@ -132,31 +133,72 @@
     </div>
   </div>
 
+  <!-- Dataset -->
+  <div class="content-section">
+    <h2>Dataset</h2>
+    <p>Data is sourced from the <strong>CIC-IDS-2018</strong> dataset, published by the Canadian Institute for Cybersecurity (CIC) at the University of New Brunswick and hosted on the <a href="https://registry.opendata.aws/cse-cic-ids2018" target="_blank" style="color:var(--cyan);text-decoration:none;">AWS Open Data Registry</a>. The dataset simulates a realistic enterprise network over 10 days in February–March 2018, capturing both benign background traffic and coordinated attack scenarios.</p>
+    <p>Each flow is represented by <strong>77 numeric features</strong> extracted by <strong>CICFlowMeter</strong> — including packet lengths, inter-arrival times, flag counts, flow duration, and byte ratios — plus a label column. All 10 files are combined for a total of <strong>~6.66 million flow records</strong> and <strong>14 distinct attack labels</strong>.</p>
+
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="stat-val">6.66M</div>
+        <div class="stat-label">Total Flow Records</div>
+        <p>Across 10 daily capture files, Feb–Mar 2018</p>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val">77</div>
+        <div class="stat-label">Features per Flow</div>
+        <p>CICFlowMeter-derived: timing, packet stats, flags, byte ratios</p>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val">14</div>
+        <div class="stat-label">Attack Labels</div>
+        <p>Spanning DDoS, DoS, Brute Force, Botnet, Infiltration, and Web attacks</p>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val">80/20</div>
+        <div class="stat-label">Train / Test Split</div>
+        <p>Stratified on binary target to preserve class balance</p>
+      </div>
+    </div>
+
+    <h3 style="margin-top:1.5rem; margin-bottom:0.75rem;">Source Files &amp; Attack Labels</h3>
+    <ul class="styled">
+      <li><strong>Botnet-Friday:</strong> 771k flows — Bot (144k) vs. Benign</li>
+      <li><strong>Bruteforce-Wednesday:</strong> 619k flows — SSH-Bruteforce (94k), FTP-BruteForce (53) vs. Benign</li>
+      <li><strong>DDoS1-Tuesday:</strong> 955k flows — DDoS-LOIC-HTTP (575k) vs. Benign</li>
+      <li><strong>DDoS2-Wednesday:</strong> 561k flows — DDoS-HOIC (199k), DDoS-LOIC-UDP (1.7k) vs. Benign</li>
+      <li><strong>DoS1-Thursday:</strong> 795k flows — DoS-GoldenEye (41k), DoS-Slowloris (10k) vs. Benign</li>
+      <li><strong>DoS2-Friday:</strong> 592k flows — DoS-Hulk (145k), DoS-SlowHTTPTest (55) vs. Benign</li>
+      <li><strong>Infil1-Wednesday &amp; Infil2-Thursday:</strong> 706k flows combined — Infiltration (118k) vs. Benign</li>
+      <li><strong>Web1-Thursday &amp; Web2-Friday:</strong> 1.66M flows combined — Brute Force Web (568), XSS (229), SQL Injection (85) vs. Benign — extreme class imbalance</li>
+    </ul>
+  </div>
+
   <!-- Highlights -->
   <div class="content-section">
     <h2>Highlights</h2>
     <ul class="styled">
-      <li><strong>Early Detection:</strong> Flags anomalies at line-rate so SOC teams can intervene before attacks escalate.</li>
-      <li><strong>Automated Triage:</strong> Auto-classifies attack types, enabling analysts to prioritize DDoS, brute-force, SQL exploits, or lateral-movement probes.</li>
-      <li><strong>Resource Efficiency:</strong> Two-stage logic minimizes multiclass inference to only suspicious flows, cutting compute costs and false alarms.</li>
-      <li><strong>Performance &amp; Scalability:</strong> Models train in seconds on millions of flows; easily evolves into streaming architectures without re-engineering.</li>
-      <li><strong>Actionable Insights:</strong> Detailed per-class metrics uncover blind spots, guiding feature engineering and signature development.</li>
-      <li><strong>Clear Reporting:</strong> Bar charts and Sankey diagrams communicate model performance and traffic splits for dashboards, threat briefings, and compliance.</li>
+      <li><strong>Two-Stage Architecture:</strong> Separating binary detection from multiclass triage means each model is optimized for its own task — reducing false alarms at Stage 1 before spending compute on fine-grained classification.</li>
+      <li><strong>Fast Training on Large Data:</strong> Both XGBoost models train in well under a minute combined on 5+ million training records, with no GPU required.</li>
+      <li><strong>Extreme Class Imbalance Handling:</strong> With attack types like SQL Injection appearing only 85 times across 1.66M flows, per-class F₁ metrics surface real gaps that aggregate accuracy hides.</li>
+      <li><strong>Sankey Visualization:</strong> The classification flow diagram shows exactly how traffic is routed through both stages, making the pipeline's behavior interpretable for non-technical audiences.</li>
+      <li><strong>Actionable Blind Spots:</strong> Low-sample attack classes are not ignored — their poor F₁ scores are documented and inform where labeled data collection efforts should focus next.</li>
     </ul>
   </div>
 
   <!-- Visualizations -->
   <div class="content-section">
     <h2>Visualizations</h2>
-    <p>Key model outputs from the analysis:</p>
+    <p>F₁ score breakdown by attack class alongside the Sankey diagram showing how the two-stage pipeline routes traffic from the full dataset through binary detection to specific attack type classification.</p>
     <div class="img-grid">
       <div class="img-block">
-        <div class="img-title">F₁ Score by Class</div>
-        <img src="output.png" alt="F1 Score by Class" />
+        <div class="img-title">F₁ Score by Attack Class</div>
+        <img src="attackidf1scores.png" alt="F1 Score by Class" />
       </div>
       <div class="img-block">
-        <div class="img-title">Two-Stage Classification Flow</div>
-        <img src="newplot.png" alt="Two-Stage Classification Sankey Diagram" />
+        <div class="img-title">Two-Stage Classification Flow (Sankey)</div>
+        <img src="attackidsankey.png" alt="Two-Stage Classification Sankey Diagram" />
       </div>
     </div>
   </div>
@@ -164,7 +206,7 @@
   <!-- Notebook -->
   <div class="content-section">
     <h2>Notebook</h2>
-    <p>Applies a two-stage classification pipeline to identify attack types from NetFlow logs.</p>
+    <p>Full pipeline in a single notebook: data loading and concatenation, 80/20 stratified split, Stage 1 binary XGBoost training and evaluation, Stage 2 multiclass training on attack-only flows, end-to-end classification report, and Sankey diagram generation.</p>
     <a href="https://github.com/dataglancer/dataglancer.github.io/blob/main/attackidentifier/notebooks/attackidentifier.ipynb" class="pill-link" target="_blank">View Notebook →</a>
   </div>
 
@@ -172,9 +214,10 @@
   <div class="content-section">
     <h2>Key Takeaways</h2>
     <ul class="styled">
-      <li>Different log types require tailored detection techniques — no one-size-fits-all.</li>
-      <li>Effective pipelines hinge on robust preprocessing and domain-aligned feature engineering.</li>
-      <li>Clear visualizations are critical for operational interpretation of model results.</li>
+      <li>A two-stage architecture cleanly separates detection from triage, making each model independently maintainable and explainable.</li>
+      <li>XGBoost consistently delivers near-perfect accuracy on high-volume network flow data with minimal tuning and very fast training times.</li>
+      <li>Aggregate accuracy is a misleading metric for imbalanced datasets — per-class F₁ scores tell the real story about where the model works and where it needs more data.</li>
+      <li>Real-world attack distributions are extremely skewed: some classes appear tens of thousands of times, others fewer than 100. Acknowledging this in the evaluation is as important as achieving high performance on the dominant classes.</li>
     </ul>
   </div>
 
