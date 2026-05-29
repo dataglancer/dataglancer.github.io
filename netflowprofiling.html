@@ -83,104 +83,175 @@
   <div class="page-header">
     <p class="page-label">// Security Analytics Project</p>
     <h1>EigenFlow Profiler</h1>
-    <p class="subtitle">Unsupervised attack-type classification using K-means cluster visualizations and PCA eigenprofiles — no labeled inference required.</p>
+    <p class="subtitle">Unsupervised attack-type classification using K-means cluster images and PCA eigenprofiles — revised pipeline with honest results and 6.27× benign separation.</p>
   </div>
 
   <!-- Overview -->
   <div class="content-section">
     <h2>Project Overview</h2>
-    <p>Traditional signature-based detection misses novel and subtle threats by design. This project takes a different approach: instead of learning from labeled attack signatures, it learns what each attack <em>family</em> looks like structurally — and flags anything that doesn't fit.</p>
-    <p>Inspired by the "eigenfaces" technique in facial recognition, the pipeline encodes each NetFlow record as a visual image of its cluster geometry, then trains group-specific PCA models ("eigenprofiles") on those images. Classification at inference time requires no labels — only a reconstruction error comparison.</p>
-    <p>Source data is drawn from the <strong>CIC-IDS-2018</strong> dataset (Canadian Institute for Cybersecurity / University of New Brunswick), covering nine attack files across four families: <strong>credential abuse</strong> (Brute Force), <strong>denial-of-service</strong> (DDoS, DoS), <strong>exploit/malware</strong> (Botnet, Infiltration), and <strong>application-layer</strong> (Web attacks).</p>
+    <p>Traditional signature-based detection misses novel and subtle threats by design. This project takes a fundamentally different approach: instead of learning from labeled attack signatures, it learns what each attack <em>family</em> looks like structurally — and flags anything that doesn't fit.</p>
+    <p>Inspired by the "eigenfaces" technique in facial recognition, the pipeline encodes each NetFlow attack file as a series of <strong>K-means cluster-boundary images</strong>, trains group-specific <strong>PCA eigenprofile models</strong> on those images, then classifies new traffic by measuring which group's model reconstructs it with the lowest L2 error. No labels are required at inference time.</p>
+    <p>Source data is the <strong>CIC-IDS-2018</strong> dataset (Canadian Institute for Cybersecurity / University of New Brunswick) — ten parquet files covering four attack families across multiple days of simulated enterprise traffic. This page reflects the <strong>revised pipeline</strong>, which corrects several critical inconsistencies in the original implementation and reports more honest results: <strong>70% test classification accuracy</strong> and a <strong>6.27× benign separation ratio</strong>.</p>
   </div>
 
-  <!-- Pipeline -->
+  <!-- What Changed -->
+  <div class="content-section">
+    <h2>Pipeline Revision</h2>
+    <p>The original implementation contained several bugs that made its results invalid. The revised notebook addresses all of them:</p>
+    <ul class="styled">
+      <li><strong>Consistent image size (Fix 1):</strong> The original mixed 300×300 images at training with 100×100 at inference. The fix uses a canonical 100×100 throughout — training, test generation, and benign classification all use the same dimensions.</li>
+      <li><strong>Serialized models, never re-fit (Fix 2):</strong> The original re-fit PCA from scratch on the full training directory every time a single image was classified. The fix serializes each fitted PCA object with <code>joblib</code> and loads it at inference.</li>
+      <li><strong>Single shared scaler (Fix 3):</strong> The original benign rejection test used <code>clip(x, 0, 255) / 255</code>, which clipped large NetFlow values (byte counts, durations that routinely exceed 255) and produced a fundamentally different distribution from what the models were trained on. The fix fits one <code>MinMaxScaler</code> once and uses it everywhere.</li>
+      <li><strong>K-means fit once, reused (Fix 4):</strong> The original re-fit K-means separately for the scatter points and the mesh background, creating color mismatches. The fix fits once and calls <code>.predict()</code> for both.</li>
+      <li><strong>Relative noise augmentation (Fix 6):</strong> Augmentation noise is now scaled to 5% of each PCA dimension's standard deviation rather than a fixed absolute value, making it consistent regardless of data spread.</li>
+    </ul>
+    <p>The corrected pipeline reduces the apparent benign error from ~60,000 (an artifact of the normalization mismatch) to ~21,000 — a more honest result that still clearly separates benign from attack traffic.</p>
+  </div>
+
+  <!-- How It Works -->
   <div class="content-section">
     <h2>How It Works</h2>
 
-    <h3>Step 1 — Flow-to-Image Encoding</h3>
-    <p>Each NetFlow file's 77 numeric features are normalized with <strong>MinMaxScaler</strong>, then compressed to two dimensions via <strong>PCA</strong>. <strong>K-means (k=3)</strong> is then run on the 2D PCA projection to find the natural clustering structure within each flow set. The resulting cluster assignments and decision boundaries are rendered as a <strong>300×300 grayscale image</strong> — a compact visual fingerprint of that attack's behavioral geometry.</p>
+    <h3>Step 1 — Shared Normalization</h3>
+    <p>A single <strong>MinMaxScaler</strong> is fitted once on a 20,000-row representative sample (5,000 rows from one file per attack group) and serialized. All subsequent pipelines — training images, test images, and benign testing — use this same fitted scaler, ensuring the eigenprofiles and inference operate on the same feature distribution.</p>
 
-    <h3>Step 2 — Augmentation</h3>
-    <p>To build a robust training set from a limited number of attack files, each image is augmented 5× by adding small Gaussian noise to the PCA projections before re-running K-means. This produces visually varied but structurally consistent images per attack family.</p>
+    <h3>Step 2 — Stratified Sampling</h3>
+    <p>Each source file is balanced across label classes using a pandas stratified sample capped at 10,000 rows per class. This replaces <code>RandomOverSampler</code> and prevents memory exhaustion on heavily imbalanced files (e.g. Web1-Thursday: 829,883 benign vs 341 attack rows).</p>
 
-    <h3>Step 3 — Eigenprofile Training</h3>
-    <p>Augmented images are grouped by attack family. For each of the four groups, all images are flattened into 90,000-dimensional vectors and a <strong>PCA model (5 components)</strong> is fit on the group's image matrix. The resulting principal components — the "eigenprofiles" — capture the dominant visual structure of that attack type's cluster patterns.</p>
+    <h3>Step 3 — K-means Cluster-Boundary Images</h3>
+    <p>The scaled feature matrix is compressed to two dimensions via <strong>PCA</strong>. A single <strong>K-means (k=3)</strong> model is then fit on the 2D projection and reused for both scatter point labels and mesh-grid background, ensuring colors are always consistent. The resulting cluster-boundary plot is saved as a <strong>100×100 grayscale PNG</strong> — the visual "fingerprint" of that attack's structure. Five augmented images per file are produced by injecting relative Gaussian noise before clustering.</p>
 
-    <h3>Step 4 — Reconstruction Error Classification</h3>
-    <p>At inference time, a new flow is encoded into an image using the same PCA + K-means pipeline. That image is then projected onto each group's eigenprofile basis and reconstructed. The <strong>L2 reconstruction error</strong> is computed for each group — the group that reconstructs the image most faithfully (lowest error) wins the classification. No labels needed.</p>
+    <h3>Step 4 — Eigenprofile Training</h3>
+    <p>Augmented images are grouped by attack family. For each of the four groups, all images are converted to grayscale, resized to 100×100, flattened into 10,000-dimensional vectors, and a <strong>PCA model (5 components)</strong> is fit on the group's image matrix. The resulting principal components — the "eigenprofiles" — are serialized with <code>joblib</code> for reuse at inference.</p>
 
-    <div class="img-block" style="margin-top: 1.5rem;">
-      <div class="img-title">Prep &amp; Pipeline Flowchart</div>
-      <img src="/netflowprofiling/Attack Profiling Chart.svg" alt="Prep & PCA Flowchart" />
+    <h3>Step 5 — Reconstruction Error Classification</h3>
+    <p>A new flow image is projected onto each group's 5-dimensional eigenspace and reconstructed. The <strong>L2 norm</strong> between the original and reconstructed image is computed for each group — the group yielding the lowest error wins. For benign rejection, raw NetFlow rows are normalized with the shared scaler and zero-padded to 10,000 dimensions before projection.</p>
+  </div>
+
+  <!-- Results -->
+  <div class="content-section">
+    <h2>Results</h2>
+
+    <h3>Classification Accuracy — 70% (21/30)</h3>
+    <p>Application (6/6), Credential (3/3), Botnet (3/3), and Infil2 (3/3) all classify correctly with low, stable reconstruction errors. The misclassifications are systematic rather than random: <strong>DDoS1-Tuesday and DoS1-Thursday</strong> (6 images) are consistently predicted as <em>exploit</em> — their cluster-boundary images visually resemble the exploit group's training data more than the other denial files. <strong>Infil1-Wednesday</strong> (3 images) is consistently predicted as <em>application</em> — low-rate infiltration traffic can produce 2D cluster patterns geometrically similar to web application traffic. Notably, misclassified files show errors of 4,900–5,540 vs. correctly classified denial files at 896–1,679 — the error magnitude itself is a useful anomaly signal even when group assignment is wrong.</p>
+
+    <div class="img-block" style="margin-top:1rem;">
+      <div class="img-title">Reconstruction Error by Attack Group (30 Held-Out Test Images)</div>
+      <img src="/netflowprofiling/images/v2/reconstruction_error_test.png" alt="Reconstruction error boxplot" />
+    </div>
+
+    <h3 style="margin-top:2rem;">Benign Separation — 6.27× Ratio</h3>
+    <p>8,000 benign flow rows (from four source files) are passed through the shared scaler and zero-padded before projection. Mean best-group reconstruction error for benign traffic is <strong>~21,110</strong> vs. <strong>~3,369</strong> for matched attack traffic — a 6.27× separation. All four group models produce consistently high errors on benign data; none generalizes to out-of-distribution traffic. This gap enables a simple threshold-based anomaly filter: any sample with a best-group error above ~10,000 can be flagged as likely benign before reaching the group classifier.</p>
+
+    <div class="img-block" style="margin-top:1rem;">
+      <div class="img-title">Attack vs. Benign Reconstruction Error (Left: attack test images · Right: benign flows per group model)</div>
+      <img src="/netflowprofiling/images/v2/benign_vs_attack_reconstruction.png" alt="Benign vs attack reconstruction error" />
     </div>
   </div>
 
-  <!-- Highlights -->
+  <!-- Eigenprofiles -->
   <div class="content-section">
-    <h2>Key Highlights</h2>
-    <ul class="styled">
-      <li><strong>K-means + PCA Image Encoding:</strong> Flows are projected to 2D via PCA, clustered with K-means (k=3), and saved as cluster-boundary images — capturing attack geometry rather than raw feature values.</li>
-      <li><strong>Gaussian Augmentation:</strong> 5× augmentation per file via PCA-space noise produces diverse training images from limited source data.</li>
-      <li><strong>Group-Specific Eigenprofiles:</strong> Four separate PCA models (5 components each) learn the visual fingerprint of each attack family from 90,000-dimensional image vectors.</li>
-      <li><strong>Unsupervised Classification:</strong> Attack type is inferred purely from L2 reconstruction error — no labels used at inference time.</li>
-      <li><strong>100% Test Accuracy:</strong> All 30 held-out test images correctly classified across all four attack families.</li>
-      <li><strong>Scalable &amp; Lightweight:</strong> PCA fitting and error-based inference are computationally cheap and suitable for high-volume SOC pipelines.</li>
-    </ul>
-  </div>
+    <h2>Eigenprofiles by Attack Group</h2>
+    <p>The 5 principal components learned for each group. Application traffic is highly consistent — PC1 alone explains 79.4% of variance. Credential traffic spreads across three components of near-equal weight (33.6%, 33.1%, 19.0%), reflecting more diverse cluster patterns within brute-force traffic.</p>
 
-  <!-- Visualizations -->
-  <div class="content-section">
-    <h2>Example Visualizations</h2>
-
-    <h3>Application-Layer Attack Images (K-means cluster plots)</h3>
-    <p>Each image shows NetFlow records projected into 2D PCA space, clustered by K-means, with decision boundaries rendered. The visual structure is what the eigenprofile models learn to recognize.</p>
     <div class="img-row">
       <div class="img-block">
-        <div class="img-title">Web Attack — Day 1 (Thursday)</div>
-        <img src="/netflowprofiling/images/Web1-Thursday_test2.png" alt="Web Attack Day 1" />
+        <div class="img-title">Application (PC1: 79.4%)</div>
+        <img src="/netflowprofiling/images/v2/eigenprofile_application.png" alt="Application eigenprofiles" />
       </div>
       <div class="img-block">
-        <div class="img-title">Web Attack — Day 2 (Friday)</div>
-        <img src="/netflowprofiling/images/Web2-Friday_test2.png" alt="Web Attack Day 2" />
+        <div class="img-title">Credential (PC1: 33.6%, PC2: 33.1%)</div>
+        <img src="/netflowprofiling/images/v2/eigenprofile_credential.png" alt="Credential eigenprofiles" />
+      </div>
+    </div>
+    <div class="img-row">
+      <div class="img-block">
+        <div class="img-title">Denial (PC1: 51.4%, PC2: 23.8%)</div>
+        <img src="/netflowprofiling/images/v2/eigenprofile_denial.png" alt="Denial eigenprofiles" />
+      </div>
+      <div class="img-block">
+        <div class="img-title">Exploit (PC1: 59.7%)</div>
+        <img src="/netflowprofiling/images/v2/eigenprofile_exploit.png" alt="Exploit eigenprofiles" />
+      </div>
+    </div>
+  </div>
+
+  <!-- Sample images + reconstructions -->
+  <div class="content-section">
+    <h2>Sample Cluster Images &amp; Reconstructions</h2>
+    <p>Sample cluster-boundary images (left column) and their eigenprofile reconstructions (right column) for correctly classified test cases. Each cluster image shows NetFlow records in 2D PCA space with K-means decision boundaries. The reconstruction shows how well the group's eigenprofile captures the image's visual structure.</p>
+
+    <h3>Application</h3>
+    <div class="img-row">
+      <div class="img-block">
+        <div class="img-title">Cluster Image — Web Attack</div>
+        <img src="/netflowprofiling/images/v2/cluster_application.png" alt="Application cluster image" />
+      </div>
+      <div class="img-block">
+        <div class="img-title">Original vs. Reconstruction</div>
+        <img src="/netflowprofiling/images/v2/recon_application.png" alt="Application reconstruction" />
       </div>
     </div>
 
-    <h3>Original Image vs. Eigenprofile Reconstruction</h3>
-    <p>A test image projected onto the application-layer eigenprofile basis and reconstructed. Low reconstruction error confirms correct group assignment.</p>
-    <div class="img-block">
-      <img src="/netflowprofiling/images/Web2-Friday_test2_comparison_application.png" alt="Original vs Reconstructed" />
+    <h3>Credential</h3>
+    <div class="img-row">
+      <div class="img-block">
+        <div class="img-title">Cluster Image — Brute Force</div>
+        <img src="/netflowprofiling/images/v2/cluster_credential.png" alt="Credential cluster image" />
+      </div>
+      <div class="img-block">
+        <div class="img-title">Original vs. Reconstruction</div>
+        <img src="/netflowprofiling/images/v2/recon_credential.png" alt="Credential reconstruction" />
+      </div>
     </div>
 
-    <h3>Reconstruction Error by Attack Group</h3>
-    <p>Box plot of L2 reconstruction errors across the four attack families on held-out test images. Each group clusters tightly around its own reconstruction error range, confirming the models have learned distinct visual signatures.</p>
-    <div class="img-block">
-      <img src="/netflowprofiling/images/coloredreconerrobyattack.png" alt="Error Box Plot" />
+    <h3>Denial-of-Service</h3>
+    <div class="img-row">
+      <div class="img-block">
+        <div class="img-title">Cluster Image — DDoS</div>
+        <img src="/netflowprofiling/images/v2/cluster_denial.png" alt="Denial cluster image" />
+      </div>
+      <div class="img-block">
+        <div class="img-title">Original vs. Reconstruction</div>
+        <img src="/netflowprofiling/images/v2/recon_denial.png" alt="Denial reconstruction" />
+      </div>
+    </div>
+
+    <h3>Exploit / Infiltration</h3>
+    <div class="img-row">
+      <div class="img-block">
+        <div class="img-title">Cluster Image — Botnet</div>
+        <img src="/netflowprofiling/images/v2/cluster_exploit.png" alt="Exploit cluster image" />
+      </div>
+      <div class="img-block">
+        <div class="img-title">Original vs. Reconstruction</div>
+        <img src="/netflowprofiling/images/v2/recon_exploit.png" alt="Exploit reconstruction" />
+      </div>
     </div>
   </div>
 
   <!-- Notebook -->
   <div class="content-section">
     <h2>Notebook</h2>
-    <p>Complete Jupyter notebook covering flow-to-image encoding, K-means clustering, data augmentation, eigenprofile training, and error-based classification.</p>
-    <a href="https://github.com/dataglancer/dataglancer.github.io/blob/main/netflowprofiling/notebooks/netflowprofiling.ipynb" class="pill-link" target="_blank">View Notebook →</a>
+    <p>Revised notebook implementing all pipeline fixes: shared scaler, serialized PCA models, consistent 100×100 image size, single K-means fit, relative noise augmentation, and a proper benign rejection test.</p>
+    <a href="https://github.com/dataglancer/dataglancer.github.io/blob/main/netflowprofiling/FixingEigenFaces/netflowprofiling_fixed.ipynb" class="pill-link" target="_blank">View Revised Notebook →</a>
   </div>
 
   <!-- Full Report -->
   <div class="content-section">
     <h2>Full Report</h2>
-    <p>Complete writeup including problem statement, detailed methodology, and results.</p>
-    <a href="netflowprofiling/netflowprofiling.pdf" class="pill-link" target="_blank">Read the Full Report →</a>
+    <p>Complete writeup including problem statement, methodology, per-group results with explained variance tables, classification results table, benign rejection analysis, and discussion of limitations and future work.</p>
+    <a href="netflowprofiling/netflowprofiler.pdf" class="pill-link" target="_blank">Read the Full Report →</a>
   </div>
 
   <!-- Takeaways -->
   <div class="content-section">
     <h2>Key Takeaways</h2>
     <ul class="styled">
-      <li>K-means clustering in PCA space produces visually distinct, family-specific flow fingerprints that eigenprofile models can reliably learn.</li>
-      <li>Gaussian noise augmentation in PCA space is an effective strategy for generating diverse training images from limited source files.</li>
-      <li>Reconstruction error against group-specific PCA models is a robust unsupervised classifier — 100% accuracy on 30 held-out test samples.</li>
-      <li>Image-style encoding of network flow data opens the door to the full computer vision toolkit for network security problems.</li>
+      <li>Pipeline integrity matters — normalization inconsistencies inflated the original benign error by ~3× and inflated test accuracy to an unreliable 100%. Fixing them yielded honest, reproducible results.</li>
+      <li>70% classification accuracy reflects real structural similarity between some attack families; the misclassifications are systematic and informative, not random noise.</li>
+      <li>The 6.27× benign separation ratio is the more operationally valuable result — a simple reconstruction-error threshold can reliably filter benign traffic before the group classifier runs.</li>
+      <li>Two lossy projections in series (77D → 2D → 100×100 image → 5D eigenspace) is a significant limitation. Replacing the first PCA projection with a supervised method like LDA would likely improve classification accuracy substantially.</li>
     </ul>
   </div>
 
